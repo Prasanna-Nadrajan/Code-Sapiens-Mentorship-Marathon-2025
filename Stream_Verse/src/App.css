@@ -81,3 +81,76 @@
 .watchlist-btn.added {
   background-color: lightgreen;
 }
+
+.login-container {
+  /* Inherits black background and white text from index.css */
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-box {
+  background-color: #141414; /* Darker than background */
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 400px; /* Max width for a form */
+  text-align: center;
+}
+
+.login-title {
+  color: antiquewhite;
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-input {
+  padding: 15px;
+  background-color: #333; /* Dark input fields */
+  color: antiquewhite;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.login-input::placeholder {
+  color: #aaa;
+}
+
+.login-btn {
+  /* Reusing the Red-style color from your logo/tag for the primary action */
+  background-color: #E50914; 
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #f40612;
+}
+
+.login-signup {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.login-signup a {
+  color: #E50914; /* Highlight link in red */
+  text-decoration: none;
+}
