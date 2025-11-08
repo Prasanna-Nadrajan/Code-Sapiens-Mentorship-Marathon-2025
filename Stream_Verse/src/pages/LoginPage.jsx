@@ -1,24 +1,25 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from 'react';
-import { mockUsers } from '../data/userData'; 
+// 💡 NOTE: The static import of mockUsers should be removed or commented out 
+// as the user list is now passed via props.
+// import { mockUsers } from '../data/userData'; 
 
-// LoginPage now accepts two props: onLoginSuccess AND onGoToSignup
-const LoginPage = ({ onLoginSuccess, onGoToSignup }) => {
+const LoginPage = ({ onLoginSuccess, onGoToSignup, allUsers }) => { // 👈 ACCEPT allUsers
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // ... [handleSubmit function remains the same] ...
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
 
-    const user = mockUsers.find(
+    // 1. Use the dynamic list of users (allUsers prop) for authentication
+    const user = allUsers.find(
       u => u.username === username && u.password === password
     );
 
     if (user) {
-      onLoginSuccess();
+      onLoginSuccess(user.id); 
     } else {
       setError('Invalid username or password.');
     }
@@ -29,7 +30,8 @@ const LoginPage = ({ onLoginSuccess, onGoToSignup }) => {
       <div className="login-box">
         <h2 className="login-title">Sign In to Stream-Verse</h2>
         <form onSubmit={handleSubmit} className="login-form">
-          {error && <p className="login-error">{error}</p>}
+          {/* Display error message */}
+          {error && <p className="login-error">{error}</p>} 
           
           <input
             type="text"
@@ -53,7 +55,6 @@ const LoginPage = ({ onLoginSuccess, onGoToSignup }) => {
         </form>
         <p className="login-signup">
           New to Stream-Verse? 
-          {/* 💡 UPDATED LINK: Call the onGoToSignup function on click */}
           <a href="#" onClick={onGoToSignup}>Sign up now.</a> 
         </p>
       </div>

@@ -2,22 +2,41 @@
 import React, { useState } from 'react';
 import MediaFeed from './components/MediaFeed';
 import LoginPage from './pages/LoginPage';
-import SignupPage from './pages/SignupPage'; // 👈 Import new component
+import SignupPage from './pages/SignupPage'; 
+import WatchlistPage from './pages/WatchListPage'; //import new page
+import useUserManagement from './hooks/useUserManagement';
+import useUserWatchlist from './hooks/useUserWatchlist'; //NEW
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('login'); 
+  const [currentUserId, setCurrentUserId] = useState(null); // NEW state for User ID
+  const { allUsers, registerUser } = useUserManagement(); 
 
-  // Functions to change the view
-  const handleLogin = () => setCurrentPage('home'); // Go to MediaFeed
-  const handleGoToSignup = () => setCurrentPage('signup'); // Go to SignupPage
-  const handleGoToLogin = () => setCurrentPage('login'); // Go to LoginPage
+  // Use the custom hook to manage the persistent, user-specific watchlist
+  const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); // NEW
+
+  // Function to switch to home page AND set the logged-in user's ID
+  const handleLogin = (userId) => { //  Accepts userId now
+    setCurrentUserId(userId);
+    setCurrentPage('home'); 
+  };
+
+  const handleGoToLogin = () => {
+    setCurrentUserId(null); // Clear user ID on logout/going to login
+    setCurrentPage('login');
+  };
+  
+  const handleGoToSignup = () => setCurrentPage('signup');
+  const handleGoToWatchlist = () => setCurrentPage('watchlist'); 
+  const handleGoToHome = () => setCurrentPage('home');
 
   const renderPage = () => {
     if (currentPage === 'login') {
       return (
         <LoginPage 
+          allUsers={allUsers} //PASS ALL USERS for authentication
           onLoginSuccess={handleLogin} 
-          onGoToSignup={handleGoToSignup} // Pass function to go to signup
+          onGoToSignup={handleGoToSignup}
         />
       );
     }
@@ -25,7 +44,8 @@ const App = () => {
     if (currentPage === 'signup') {
       return (
         <SignupPage 
-          onGoToLogin={handleGoToLogin} // Pass function to go back to login
+          onRegister={registerUser} //  PASS REGISTER FUNCTION
+          onGoToLogin={handleGoToLogin}
         />
       );
     }
@@ -37,8 +57,9 @@ const App = () => {
           <nav className="nav-bar">
             <span className="logo">Stream-Verse</span>
             <div className="nav-links">
-              <a href="#home">Home</a>
-              <a href="#watchlist">Watchlist</a>
+              {/*  UPDATED LINKS: Use onClick handlers for state routing */}
+              <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
+              <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist ({userWatchlist.length})</a>
               <button onClick={handleGoToLogin} className="nav-btn">
                 Logout
               </button>
@@ -47,7 +68,19 @@ const App = () => {
         </header>
         
         <main className="main-content">
-          <MediaFeed />
+          {currentPage === 'home' && (
+            <MediaFeed 
+              userWatchlist={userWatchlist}
+              onToggleWatchlist={toggleWatchlistItem}
+            />
+          )}
+          
+          {currentPage === 'watchlist' && (
+            <WatchlistPage 
+              userWatchlist={userWatchlist}
+              onToggleWatchlist={toggleWatchlistItem}
+            />
+          )}
         </main>
       </>
     );

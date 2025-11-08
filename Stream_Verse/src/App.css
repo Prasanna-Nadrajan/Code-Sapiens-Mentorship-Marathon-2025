@@ -154,3 +154,88 @@
   color: #E50914; /* Highlight link in red */
   text-decoration: none;
 }
+
+/* --- Navigation Updates --- */
+.nav-links a.active-link {
+  color: white; /* Highlight active link white */
+  font-weight: bold;
+  border-bottom: 2px solid #E50914; /* Add a red underscore */
+  padding-bottom: 2px;
+}
+
+/* --- Empty Watchlist Message --- */
+.empty-message {
+  margin-top: 40px;
+  font-size: 1.2rem;
+  color: #aaa;
+  text-align: center;
+}
+
+/* src/App.css (Append this to the existing content) */
+
+/* --- Genre Filter Bar --- */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+  padding-bottom: 5px;
+}
+
+.filter-btn {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap; /* Prevents text wrap inside button */
+}
+
+.filter-btn:hover {
+  background-color: #444;
+}
+
+.filter-btn.active-filter {
+  background-color: #E50914; /* Use the Stream-Verse primary red */
+  border-color: #E50914;
+  font-weight: bold;
+}
+
+/* src/App.css (Append this to the existing content) */
+
+/* --- Control Bar Layout --- */
+.controls-bar {
+  display: flex;
+  flex-direction: column; /* Stack search and filters on mobile */
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #333;
+  color: antiquewhite;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-input::placeholder {
+  color: #aaa;
+}
+
+/* Media query to arrange controls side-by-side on larger screens */
+@media (min-width: 768px) {
+  .controls-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .search-input {
+    width: 300px; /* Limit width on desktop */
+  }
+}

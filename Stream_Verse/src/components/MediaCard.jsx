@@ -1,26 +1,30 @@
-import React, { useState } from 'react';
+// src/components/MediaCard.jsx
+import React from 'react';
 
-const MediaCard = ({ title, year, genre, duration, imageUrl, isNew }) => {
-  const [isWatching, setIsWatching] = useState(false);
+// Accept the full item, the watchlist array, and the toggle function
+const MediaCard = ({ item, userWatchlist, onToggleWatchlist }) => {
+  // 1. Determine if the item's ID is present in the user's watchlist array
+  const isWatching = userWatchlist.includes(item.id);
 
-  const toggleWatchlist = () => {
-    setIsWatching(!isWatching);
+  // 2. The click handler calls the global function with this item's ID
+  const handleToggle = () => {
+    onToggleWatchlist(item.id);
   };
 
   return (
     <div className="media-card">
-      <img src={imageUrl} alt={`${title} poster`} className="card-image" />
+      <img src={item.imageUrl} alt={`${item.title} poster`} className="card-image" />
       
-      {isNew && <span className="new-tag">NEW!</span>} 
+      {item.isNew && <span className="new-tag">NEW!</span>} 
 
       <div className="card-info">
-        <h3>{title}</h3>
+        <h3>{item.title}</h3>
         <p className="details">
-          {year} • {genre} • {duration}
+          {item.year} • {item.genre} • {item.duration}
         </p>
         
         <button 
-          onClick={toggleWatchlist}
+          onClick={handleToggle}
           className={`watchlist-btn ${isWatching ? 'added' : ''}`}
         >
           {isWatching ? '✅ On Watchlist' : '➕ Add to Watchlist'}
