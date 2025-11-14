@@ -1,28 +1,38 @@
 // src/pages/WatchlistPage.jsx
 import React from 'react';
 import MediaCard from '../components/MediaCard'; 
-import { mediaItems } from '../data/mediaData'; // Import the full list of media
 
-// This component shows only the items whose IDs are in userWatchlist
-const WatchlistPage = ({ userWatchlist, onToggleWatchlist }) => {
+const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist }) => {
   
-  // 1. Filter the full list of media to find only the items in the user's watchlist
-  const wishlistItems = mediaItems.filter(item => 
+  // Get the media objects that are in the user's watchlist
+  let wishlistItems = (fullMediaCatalog || []).filter(item => 
     userWatchlist.includes(item.id)
   );
+
+  // FIX: Ensure no duplicate movies are rendered (just in case the API returned them)
+  const seenIds = new Set();
+  wishlistItems = wishlistItems.filter(item => {
+    const isDuplicate = seenIds.has(item.id);
+    seenIds.add(item.id);
+    return !isDuplicate;
+  });
+  // END FIX
 
   return (
     <div className="main-content">
       <h2>⭐ Your Watchlist ({wishlistItems.length} items)</h2>
       
-      {wishlistItems.length === 0 ? (
+      {/* The loading check relies on the fullMediaCatalog length */}
+      {fullMediaCatalog.length === 0 ? (
+        <p className="empty-message">Loading media catalog...</p>
+      ) : wishlistItems.length === 0 ? (
         <p className="empty-message">Your watchlist is currently empty. Add some movies from the Home page!</p>
       ) : (
-        // 2. Reuse the same media-grid styling and MediaCard component
         <div className="media-grid">
+          {/* Keys are now unique based on the filtered list */}
           {wishlistItems.map((item) => (
             <MediaCard
-              key={item.id}
+              key={item.id} // The key is the unique movie ID
               item={item}
               userWatchlist={userWatchlist}
               onToggleWatchlist={onToggleWatchlist}

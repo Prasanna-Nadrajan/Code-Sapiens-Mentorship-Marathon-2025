@@ -1,73 +1,90 @@
 // src/components/MediaFeed.jsx
 import React, { useState } from 'react';
+import MediaRow from './MediaRow';
 import MediaCard from './MediaCard';
-import { mediaItems } from '../data/mediaData'; 
 
-const MediaFeed = ({ userWatchlist, onToggleWatchlist }) => {
+// 💡 NEW: Accept dataRows instead of a single mediaList
+const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
+  // Use the movies from the first row (Top 10) as the main list for filtering/searching
+  const mainMediaList = dataRows[0]?.movies || []; 
+
   const [selectedGenre, setSelectedGenre] = useState('All'); 
-  // 1. NEW STATE: State to store the user's search input
   const [searchTerm, setSearchTerm] = useState(''); 
 
-  // Logic for unique genres (unchanged)
-  const uniqueGenres = new Set(mediaItems.map(item => item.genre));
-  const allGenres = ['All', ...uniqueGenres]; 
-
-  // --- Filtering Logic (COMBINED: Search AND Genre Filter) ---
-  const filteredMedia = mediaItems.filter(item => {
-    
-    // A. Genre Filter: Check if the genre matches the selection
-    const genreMatch = selectedGenre === 'All' || item.genre === selectedGenre;
-    
-    // B. Search Filter: Check if the title includes the search term (case-insensitive)
-    const searchMatch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Return true only if BOTH genre and search term match
-    return genreMatch && searchMatch;
+  // --- Genre and Search Logic Refactored ---
+  const allGenresSet = new Set(['All']);
+  dataRows.forEach(row => {
+    row.movies.forEach(movie => {
+        if (movie.genre && movie.genre !== 'Action/Adventure') {
+            allGenresSet.add(movie.genre);
+        }
+    });
   });
+  const allGenres = Array.from(allGenresSet);
+
+
+  // Final list is the main list filtered by search term 
+  const searchResults = mainMediaList.filter(item => 
+    item.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="media-feed-container">
       
-      {/* 2. Search Input and Filter Buttons UI */}
+      {/* Search Input and Filter Buttons UI (Simplified) */}
       <div className="controls-bar">
-        {/* Search Input */}
         <input 
             type="text" 
             placeholder="Search titles..." 
             value={searchTerm}
-            // Update the searchTerm state on input change
             onChange={(e) => setSearchTerm(e.target.value)} 
             className="search-input"
         />
-        
-        {/* Genre Buttons */}
-        <div className="filter-bar">
-          {allGenres.map(genre => (
-            <button
-              key={genre}
-              onClick={() => setSelectedGenre(genre)}
-              className={`filter-btn ${selectedGenre === genre ? 'active-filter' : ''}`}
-            >
-              {genre}
-            </button>
+        {/* Hiding genre buttons unless searching, as rows categorize content now */}
+        {searchTerm.length === 0 ? null : (
+            <div className="filter-bar">
+            {allGenres.map(genre => (
+                <button
+                key={genre}
+                onClick={() => setSelectedGenre(genre)}
+                className={`filter-btn ${selectedGenre === genre ? 'active-filter' : ''}`}
+                >
+                {genre}
+                </button>
+            ))}
+            </div>
+        )}
+      </div>
+      
+      {/* 💡 RENDER LOGIC: If searching, show a grid. If not, show the rows. */}
+      {searchTerm.length > 0 ? (
+        <div className="media-grid-search">
+          <h2>Search Results ({searchResults.length} items)</h2>
+          <div className="media-grid">
+            {searchResults.map(item => (
+                <MediaCard
+                    key={item.id}
+                    item={item} 
+                    userWatchlist={userWatchlist} 
+                    onToggleWatchlist={onToggleWatchlist} 
+                />
+            ))}
+          </div>
+        </div>
+      ) : (
+        // RENDER ROWS: Iterate over the structured dataRows array
+        <div>
+          {dataRows.map((row, index) => (
+            <MediaRow 
+              key={index}
+              title={row.title}
+              movies={row.movies}
+              userWatchlist={userWatchlist}
+              onToggleWatchlist={onToggleWatchlist}
+            />
           ))}
         </div>
-      </div>
-
-      <h2>
-        🔥 Trending Movies on Stream-Verse
-      </h2>
-      
-      <div className="media-grid">
-        {filteredMedia.map((item) => (
-          <MediaCard
-            key={item.id}
-            item={item} 
-            userWatchlist={userWatchlist} 
-            onToggleWatchlist={onToggleWatchlist} 
-          />
-        ))}
-      </div>
+      )}
     </div>
   );
 };

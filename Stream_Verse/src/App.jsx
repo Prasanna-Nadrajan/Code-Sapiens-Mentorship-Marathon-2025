@@ -1,22 +1,23 @@
 // src/App.jsx
-import React, { useState } from 'react';
-import MediaFeed from './components/MediaFeed';
+import React, { useState, useCallback, useEffect } from 'react'; // ADD useEffect
+import MediaFetcher from './components/MediaFetcher'; 
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage'; 
-import WatchlistPage from './pages/WatchListPage'; //import new page
+import WatchlistPage from './pages/WatchlistPage'; 
 import useUserManagement from './hooks/useUserManagement';
-import useUserWatchlist from './hooks/useUserWatchlist'; //NEW
+import useUserWatchlist from './hooks/useUserWatchlist'; 
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('login'); 
-  const [currentUserId, setCurrentUserId] = useState(null); // NEW state for User ID
+  const [currentUserId, setCurrentUserId] = useState(null); 
+  // FIX: Initialize the state as an empty array, not undefined (it was correct before the last change)
+  const [fullMediaCatalog, setFullMediaCatalog] = useState([]); 
   const { allUsers, registerUser } = useUserManagement(); 
 
-  // Use the custom hook to manage the persistent, user-specific watchlist
-  const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); // NEW
+  const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
 
   // Function to switch to home page AND set the logged-in user's ID
-  const handleLogin = (userId) => { //  Accepts userId now
+  const handleLogin = (userId) => { 
     setCurrentUserId(userId);
     setCurrentPage('home'); 
   };
@@ -29,6 +30,12 @@ const App = () => {
   const handleGoToSignup = () => setCurrentPage('signup');
   const handleGoToWatchlist = () => setCurrentPage('watchlist'); 
   const handleGoToHome = () => setCurrentPage('home');
+
+  // FIX: Wrap the handler with useCallback to ensure it's not recreated on every render
+  const handleMediaDataFetched = useCallback((data) => { 
+    // This function will receive the full list of movies from MediaFetcher
+    setFullMediaCatalog(data);
+  }, []); 
 
   const renderPage = () => {
     if (currentPage === 'login') {
@@ -44,7 +51,7 @@ const App = () => {
     if (currentPage === 'signup') {
       return (
         <SignupPage 
-          onRegister={registerUser} //  PASS REGISTER FUNCTION
+          onRegister={registerUser} //PASS REGISTER FUNCTION
           onGoToLogin={handleGoToLogin}
         />
       );
@@ -57,7 +64,6 @@ const App = () => {
           <nav className="nav-bar">
             <span className="logo">Stream-Verse</span>
             <div className="nav-links">
-              {/*  UPDATED LINKS: Use onClick handlers for state routing */}
               <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
               <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist ({userWatchlist.length})</a>
               <button onClick={handleGoToLogin} className="nav-btn">
@@ -69,14 +75,17 @@ const App = () => {
         
         <main className="main-content">
           {currentPage === 'home' && (
-            <MediaFeed 
+            <MediaFetcher 
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
+              onDataFetched={handleMediaDataFetched} // Pass handler to update catalog
             />
           )}
           
+          {/* Watchlist component requires the full catalog */}
           {currentPage === 'watchlist' && (
             <WatchlistPage 
+              fullMediaCatalog={fullMediaCatalog} // Pass the state
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
             />

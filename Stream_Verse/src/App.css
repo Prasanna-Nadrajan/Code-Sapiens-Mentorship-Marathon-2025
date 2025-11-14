@@ -18,14 +18,22 @@
   text-decoration: none;
 }
 
+/* NEW: Active link style */
+.nav-links a.active-link {
+  color: white; 
+  font-weight: bold;
+  border-bottom: 2px solid #E50914; 
+  padding-bottom: 2px;
+}
+
 .main-content {
   padding: 20px 40px;
 }
 
-/*Media Grid*/
-
+/* --- Media Grid (For Search Results) --- */
 .media-grid {
   display: grid;
+  /* Responsive grid columns */
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 20px;
   margin-top: 20px;
@@ -50,8 +58,7 @@
   display: block;
 }
 
-/*Interactive Elements*/
-
+/* --- Interactive Elements --- */
 .new-tag {
   position: absolute;
   top: 10px;
@@ -82,8 +89,8 @@
   background-color: lightgreen;
 }
 
+/* --- Login/Signup Page Styles --- */
 .login-container {
-  /* Inherits black background and white text from index.css */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -92,12 +99,12 @@
 }
 
 .login-box {
-  background-color: #141414; /* Darker than background */
+  background-color: #141414; 
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   width: 100%;
-  max-width: 400px; /* Max width for a form */
+  max-width: 400px; 
   text-align: center;
 }
 
@@ -116,7 +123,7 @@
 
 .login-input {
   padding: 15px;
-  background-color: #333; /* Dark input fields */
+  background-color: #333; 
   color: antiquewhite;
   border: 1px solid #555;
   border-radius: 4px;
@@ -128,7 +135,6 @@
 }
 
 .login-btn {
-  /* Reusing the Red-style color from your logo/tag for the primary action */
   background-color: #E50914; 
   color: white;
   padding: 15px;
@@ -151,65 +157,15 @@
 }
 
 .login-signup a {
-  color: #E50914; /* Highlight link in red */
+  color: #E50914; 
   text-decoration: none;
 }
 
-/* --- Navigation Updates --- */
-.nav-links a.active-link {
-  color: white; /* Highlight active link white */
-  font-weight: bold;
-  border-bottom: 2px solid #E50914; /* Add a red underscore */
-  padding-bottom: 2px;
-}
+/* --- Controls/Filter Bar Styles --- */
 
-/* --- Empty Watchlist Message --- */
-.empty-message {
-  margin-top: 40px;
-  font-size: 1.2rem;
-  color: #aaa;
-  text-align: center;
-}
-
-/* src/App.css (Append this to the existing content) */
-
-/* --- Genre Filter Bar --- */
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap; /* Allows wrapping on smaller screens */
-  padding-bottom: 5px;
-}
-
-.filter-btn {
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s, border-color 0.2s;
-  white-space: nowrap; /* Prevents text wrap inside button */
-}
-
-.filter-btn:hover {
-  background-color: #444;
-}
-
-.filter-btn.active-filter {
-  background-color: #E50914; /* Use the Stream-Verse primary red */
-  border-color: #E50914;
-  font-weight: bold;
-}
-
-/* src/App.css (Append this to the existing content) */
-
-/* --- Control Bar Layout --- */
 .controls-bar {
   display: flex;
-  flex-direction: column; /* Stack search and filters on mobile */
+  flex-direction: column; 
   gap: 15px;
   margin-bottom: 25px;
 }
@@ -228,7 +184,35 @@
   color: #aaa;
 }
 
-/* Media query to arrange controls side-by-side on larger screens */
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; 
+  padding-bottom: 5px;
+}
+
+.filter-btn {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap; 
+}
+
+.filter-btn:hover {
+  background-color: #444;
+}
+
+.filter-btn.active-filter {
+  background-color: #E50914; 
+  border-color: #E50914;
+  font-weight: bold;
+}
+
 @media (min-width: 768px) {
   .controls-bar {
     flex-direction: row;
@@ -236,6 +220,55 @@
     align-items: center;
   }
   .search-input {
-    width: 300px; /* Limit width on desktop */
+    width: 300px; 
   }
+}
+
+/* --- Media Row Styles (NEW) --- */
+
+.media-row-container {
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.row-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 15px;
+}
+
+/* Horizontal scrolling wrapper */
+.media-row-content {
+    display: flex;
+    overflow-x: scroll; 
+    overflow-y: hidden;
+    gap: 15px; 
+    padding-bottom: 20px; 
+    padding-right: 40px; 
+}
+
+/* Ensure Media Cards maintain a fixed size in the row */
+.media-row-content .media-card {
+    min-width: 200px;
+    width: 200px;
+    flex-shrink: 0; 
+}
+
+/* Hide scrollbar for a cleaner OTT look */
+.media-row-content::-webkit-scrollbar {
+    height: 8px;
+}
+
+.media-row-content::-webkit-scrollbar-thumb {
+    background: #E50914; 
+    border-radius: 10px;
+}
+
+/* --- Empty Watchlist Message --- */
+.empty-message {
+  margin-top: 40px;
+  font-size: 1.2rem;
+  color: #aaa;
+  text-align: center;
 }
