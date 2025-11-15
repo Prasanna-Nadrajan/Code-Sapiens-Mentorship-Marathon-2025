@@ -6,11 +6,13 @@ import SignupPage from './pages/SignupPage';
 import WatchlistPage from './pages/WatchlistPage'; 
 import useUserManagement from './hooks/useUserManagement';
 import useUserWatchlist from './hooks/useUserWatchlist'; 
+import ProfileMenu from './components/ProfileMenu';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('login'); 
   const [currentUserId, setCurrentUserId] = useState(null); 
   // FIX: Initialize the state as an empty array, not undefined (it was correct before the last change)
+  const [currentUserName, setCurrentUserName] = useState(null);
   const [fullMediaCatalog, setFullMediaCatalog] = useState([]); 
   const { allUsers, registerUser } = useUserManagement(); 
 
@@ -19,11 +21,15 @@ const App = () => {
   // Function to switch to home page AND set the logged-in user's ID
   const handleLogin = (userId) => { 
     setCurrentUserId(userId);
+    // Find the user object to get their username
+    const user = allUsers.find(u => u.id === userId || u.id === String(userId));
+    setCurrentUserName(user ? user.username : 'Guest'); 
     setCurrentPage('home'); 
   };
 
   const handleGoToLogin = () => {
-    setCurrentUserId(null); // Clear user ID on logout/going to login
+    setCurrentUserId(null); 
+    setCurrentUserName(null); 
     setCurrentPage('login');
   };
   
@@ -66,9 +72,9 @@ const App = () => {
             <div className="nav-links">
               <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
               <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
-              <button onClick={handleGoToLogin} className="nav-btn">
-                Logout
-              </button>
+              
+              {/* 💡 KEY CHANGE: Replace Logout button with ProfileMenu */}
+              <ProfileMenu onLogout={handleGoToLogin} username={currentUserName} /> 
             </div>
           </nav>
         </header>

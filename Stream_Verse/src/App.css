@@ -272,3 +272,205 @@
   color: #aaa;
   text-align: center;
 }
+
+body {
+  background: radial-gradient(circle at top, #1c1c1c 0%, #000000 100%);
+}
+
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Ensure it stays on top */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.logo {
+  font-size: 1.8rem; /* Slightly larger logo */
+  font-weight: 900;
+  color: #E50914; 
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Increase spacing */
+}
+
+.nav-links a {
+  color: #f5f5f5;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #E50914; /* Red hover effect */
+}
+
+/* NEW: Active link style */
+.nav-links a.active-link {
+  color: white; 
+  font-weight: bold;
+  border-bottom: 2px solid #E50914; 
+  padding-bottom: 2px;
+}
+
+.main-content {
+  padding: 20px 40px;
+}
+
+/* --- Media Card Enhancements (Shadows and Polish) --- */
+.media-card {
+  position: relative;
+  background-color: #2e2e2e; /* Slightly lighter card background */
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+}
+
+.media-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(229, 9, 20, 0.5); /* Red shadow on hover */
+  z-index: 10;
+}
+
+.media-card .card-info {
+    padding: 15px;
+}
+
+.card-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Interactive Button Enhancements --- */
+.watchlist-btn {
+  width: 100%;
+  padding: 10px; /* Bigger button */
+  border: none;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  /* Fancy Button Style */
+  background: linear-gradient(180deg, #444 0%, #222 100%);
+  color: #f5f5f5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.watchlist-btn:hover {
+  background: linear-gradient(180deg, #555 0%, #333 100%);
+  color: white;
+}
+
+.watchlist-btn.added {
+  /* Success Gradient */
+  background: linear-gradient(180deg, #379237 0%, #267c26 100%);
+  color: white;
+}
+
+.watchlist-btn.added:hover {
+  background: linear-gradient(180deg, #42a142 0%, #328b32 100%);
+}
+
+/* --- Profile Menu Styles (New) --- */
+.profile-menu-container {
+    position: relative;
+}
+
+.profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: white;
+    font-size: 1rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.profile-btn:hover {
+    background-color: #333;
+}
+
+.profile-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #E50914; /* Red border */
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: 100%; 
+    right: 0;
+    min-width: 200px;
+    background-color: #1a1a1a; 
+    border: 1px solid #333;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    z-index: 2000; 
+    margin-top: 10px;
+    padding: 0; /* 💡 FIX: REMOVED PADDING HERE */
+    overflow: hidden; /* 💡 FIX: Ensures hover effect stays inside border-radius */
+}
+
+.dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 10px 15px; /* 💡 FIX: Applied horizontal padding here */
+    text-align: left;
+    background: none;
+    border: none;
+    color: white;
+    text-decoration: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: #333;
+}
+
+.profile-info-header {
+    pointer-events: none; 
+    padding: 10px 15px 5px; /* Added back padding here */
+    opacity: 0.8;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: #333;
+    margin: 5px 0;
+}
+
+.logout-btn-option {
+    color: #E50914; 
+    font-weight: bold;
+}
+
+/* --- Media Query for Controls Bar --- */
+@media (min-width: 768px) {
+  .controls-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .search-input {
+    width: 300px; 
+  }
+}
+
+
