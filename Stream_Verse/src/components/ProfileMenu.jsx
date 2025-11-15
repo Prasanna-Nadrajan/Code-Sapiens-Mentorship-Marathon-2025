@@ -1,7 +1,8 @@
+// src/components/ProfileMenu.jsx
 import React, { useState } from 'react';
 
-// FIX: Accept the username prop
-const ProfileMenu = ({ onLogout, username }) => { 
+// FIX: Accept new handler props
+const ProfileMenu = ({ onLogout, username, onManageProfile, onSettings }) => { 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -12,6 +13,12 @@ const ProfileMenu = ({ onLogout, username }) => {
   const avatarUrl = "https://placehold.co/40x40/E50914/ffffff?text=U"; 
   // FIX: Use the passed username prop
   const displayUsername = username || "Guest"; 
+
+  // FIX: Handler to close menu after clicking a link
+  const handleProfileClick = (handler) => {
+      handler();
+      setIsOpen(false);
+  };
 
   return (
     <div className="profile-menu-container">
@@ -37,11 +44,12 @@ const ProfileMenu = ({ onLogout, username }) => {
           
           <div className="dropdown-divider"></div>
 
-          <a href="#" className="dropdown-item">
+          {/* FIX: Use onClick to call new handlers */}
+          <a href="#" className="dropdown-item" onClick={() => handleProfileClick(onManageProfile)}>
             Manage Profile
           </a>
           
-          <a href="#" className="dropdown-item">
+          <a href="#" className="dropdown-item" onClick={() => handleProfileClick(onSettings)}>
             Settings
           </a>
 
@@ -49,7 +57,7 @@ const ProfileMenu = ({ onLogout, username }) => {
 
           {/* Logout Button */}
           <button 
-            onClick={onLogout} 
+            onClick={() => handleProfileClick(onLogout)} // FIX: Use handleProfileClick
             className="dropdown-item logout-btn-option"
           >
             Logout

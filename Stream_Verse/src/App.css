@@ -473,4 +473,157 @@ body {
   }
 }
 
+/* --- Hero Carousel Styles (NEW) --- */
 
+
+.hero-carousel-wrapper {
+    /* ... (unchanged styles) ... */
+    position: relative;
+    width: 100vw; 
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 600px; 
+    overflow: hidden;
+    margin-bottom: 50px;
+}
+
+.hero-carousel-track {
+    display: flex;
+    height: 100%;
+    /* 💡 FIX: Set the width dynamically to hold 10 slides (1000vw) */
+    width: 1000vw; 
+    /* NOTE: You should adjust 1000vw if you ever fetch more or fewer than 10 top movies */
+}
+
+.hero-slide {
+    width: 100vw; /* Each slide takes up the full viewport width */
+    height: 100%;
+    flex-shrink: 0;
+    position: relative;
+}
+.hero-backdrop {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7); /* Darken image slightly */
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Gradient to fade to black at the bottom for readability and blending */
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+.hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 50px;
+    padding-bottom: 50px;
+    max-width: 500px;
+    z-index: 10;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-details {
+    font-size: 1.2rem;
+    color: #ccc;
+    margin-bottom: 20px;
+}
+
+.hero-description {
+    font-size: 1rem;
+    color: #ddd;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.play-btn, .more-info-btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.play-btn {
+    background-color: white;
+    color: black;
+}
+
+.play-btn:hover {
+    background-color: #eee;
+}
+
+.more-info-btn {
+    background-color: rgba(109, 109, 110, 0.7);
+    color: white;
+}
+
+.more-info-btn:hover {
+    background-color: rgba(109, 109, 110, 0.9);
+}
+
+.carousel-nav-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50px;
+    display: flex;
+    gap: 8px;
+    z-index: 10;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background-color: #555;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active-dot {
+    background-color: #E50914; /* Stream-Verse Red */
+    transform: scale(1.2);
+}
+
+/* --- Responsive Adjustments for Hero --- */
+@media (max-width: 768px) {
+    .hero-carousel-wrapper {
+        height: 400px; /* Shorter height on mobile */
+    }
+    .hero-content {
+        left: 20px;
+        padding-bottom: 30px;
+        max-width: 90%;
+    }
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    .hero-description {
+        display: none; /* Hide description on small screens */
+    }
+    .hero-details {
+        font-size: 0.9rem;
+    }
+}

@@ -37,6 +37,9 @@ const App = () => {
   const handleGoToWatchlist = () => setCurrentPage('watchlist'); 
   const handleGoToHome = () => setCurrentPage('home');
 
+  const handleGoToManageProfile = () => setCurrentPage('manage_profile');
+  const handleGoToSettings = () => setCurrentPage('settings');
+
   // FIX: Wrap the handler with useCallback to ensure it's not recreated on every render
   const handleMediaDataFetched = useCallback((data) => { 
     // This function will receive the full list of movies from MediaFetcher
@@ -74,12 +77,20 @@ const App = () => {
               <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
               
               {/* 💡 KEY CHANGE: Replace Logout button with ProfileMenu */}
-              <ProfileMenu onLogout={handleGoToLogin} username={currentUserName} /> 
+              <ProfileMenu 
+                onLogout={handleGoToLogin} 
+                username={currentUserName} 
+                onManageProfile={handleGoToManageProfile} // 💡 NEW
+                onSettings={handleGoToSettings}           // 💡 NEW
+              />
             </div>
           </nav>
         </header>
         
         <main className="main-content">
+          {currentPage === 'manage_profile' && <h2>Manage Profile - Content Placeholder</h2>}
+          {currentPage === 'settings' && <h2>Settings - Content Placeholder</h2>}
+          
           {currentPage === 'home' && (
             <MediaFetcher 
               userWatchlist={userWatchlist}
