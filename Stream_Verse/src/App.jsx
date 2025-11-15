@@ -10,6 +10,7 @@ import SignupPage from './pages/SignupPage.jsx';
 import WatchlistPage from './pages/WatchlistPage.jsx'; 
 import useUserManagement from './hooks/useUserManagement.js';
 import useUserWatchlist from './hooks/useUserWatchlist.js'; 
+import useUserProgress from './hooks/useUserProgress.js';
 import ProfileMenu from './components/ProfileMenu.jsx';
 
 // Separated AppContent to use the ThemeContext
@@ -22,6 +23,7 @@ const AppContent = () => {
   // const { theme } = useTheme(); // Removed unused theme access here
 
   const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
+  const { userProgress, toggleProgressItem } = useUserProgress(currentUserId);
 
   // Function to switch to home page AND set the logged-in user's ID
   const handleLogin = (userId) => { 
@@ -101,6 +103,8 @@ const AppContent = () => {
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
               onDataFetched={handleMediaDataFetched} // Pass handler to update catalog
+              userProgress={userProgress} // 💡 NEW: Pass user progress
+              onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
             />
           )}
           
@@ -110,6 +114,8 @@ const AppContent = () => {
               fullMediaCatalog={fullMediaCatalog} // Pass the state
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
+              userProgress={userProgress} // 💡 NEW: Pass user progress
+              onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
             />
           )}
         </main>

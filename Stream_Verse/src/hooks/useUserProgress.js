@@ -21,36 +21,50 @@ const useUserProgress = (currentUserId) => {
   useEffect(() => {
     try {
       window.localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(allProgress));
+      console.log("✅ Progress saved to localStorage:", allProgress);
     } catch (error) {
       console.error("Failed to write progress data to localStorage:", error);
     }
   }, [allProgress]);
 
   // The actual progress list (array of completed media IDs) for the current user
-  const userProgress = allProgress[currentUserId] || [];
+  // Convert all stored IDs to numbers for consistent comparison
+  const userProgress = (allProgress[currentUserId] || []).map(id => 
+    typeof id === 'string' ? parseInt(id, 10) : id
+  );
 
   // Function to toggle a media item's 'watched' status
   const toggleProgressItem = (mediaId) => {
     if (!currentUserId) {
-        console.warn("Cannot track progress: User is not logged in.");
-        return;
+      console.warn("Cannot track progress: User is not logged in.");
+      return;
     }
     
-    // 💡 FIX: Ensure the ID is consistently treated as a string for storage and lookup
-    const mediaIdStr = String(mediaId);
+    // Ensure the ID is treated as a number for consistent comparison
+    const mediaIdNum = typeof mediaId === 'string' ? parseInt(mediaId, 10) : mediaId;
+    
+    console.log("🔄 Toggling progress for media ID:", mediaIdNum, "User:", currentUserId);
 
     setAllProgress(prevProgress => {
-      const currentList = prevProgress[currentUserId] || [];
+      // Get current list and convert all IDs to numbers
+      const currentList = (prevProgress[currentUserId] || []).map(id => 
+        typeof id === 'string' ? parseInt(id, 10) : id
+      );
+      
       let newList;
 
       // Check if the item is already marked as watched
-      if (currentList.includes(mediaIdStr)) {
+      if (currentList.includes(mediaIdNum)) {
         // Mark as unwatched (Filter out the ID)
-        newList = currentList.filter(id => id !== mediaIdStr);
+        newList = currentList.filter(id => id !== mediaIdNum);
+        console.log("➖ Removed from progress:", mediaIdNum);
       } else {
         // Mark as watched (Add the ID)
-        newList = [...currentList, mediaIdStr];
+        newList = [...currentList, mediaIdNum];
+        console.log("➕ Added to progress:", mediaIdNum);
       }
+
+      console.log("📊 New progress list:", newList);
 
       // Return the updated global dictionary
       return {
