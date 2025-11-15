@@ -2,6 +2,8 @@
 import React, { useState, useCallback, useEffect } from 'react'; // ADD useEffect
 import MediaFetcher from './components/MediaFetcher'; 
 import LoginPage from './pages/LoginPage';
+import ManageProfilePage from './pages/ManageProfilePage'; // 💡 NEW IMPORT
+import SettingsPage from './pages/SettingsPage';  
 import SignupPage from './pages/SignupPage'; 
 import WatchlistPage from './pages/WatchlistPage'; 
 import useUserManagement from './hooks/useUserManagement';
@@ -88,8 +90,8 @@ const App = () => {
         </header>
         
         <main className="main-content">
-          {currentPage === 'manage_profile' && <h2>Manage Profile - Content Placeholder</h2>}
-          {currentPage === 'settings' && <h2>Settings - Content Placeholder</h2>}
+          {currentPage === 'manage_profile' && <ManageProfilePage username={currentUserName} />}
+          {currentPage === 'settings' && <SettingsPage />}
           
           {currentPage === 'home' && (
             <MediaFetcher 
