@@ -65,7 +65,7 @@ const App = () => {
             <span className="logo">Stream-Verse</span>
             <div className="nav-links">
               <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
-              <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist ({userWatchlist.length})</a>
+              <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
               <button onClick={handleGoToLogin} className="nav-btn">
                 Logout
               </button>
