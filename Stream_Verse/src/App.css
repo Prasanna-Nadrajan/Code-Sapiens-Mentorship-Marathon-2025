@@ -1,28 +1,90 @@
+/* ------------------------------------------------ */
+/* --- 💡 NEW: THEME VARIABLES (Dark/Light Mode) --- */
+/* ------------------------------------------------ */
+:root[data-theme='dark'] {
+  /* Colors for Dark Theme */
+  --color-background: #000000;
+  --color-text: antiquewhite;
+  --color-secondary-text: #aaa;
+  --color-card-bg: #1a1a1a;
+  --color-nav-bg: rgba(0, 0, 0, 0.85);
+  --color-input-bg: #333;
+  --color-input-border: #555;
+  --color-title: #E50914; /* Netflix Red */
+  --color-link-hover: #E50914;
+  --color-logo: #E50914;
+  --color-skeleton-bg: #2e2e2e;
+  --color-skeleton-shine: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme='light'] {
+  /* Colors for Light Theme */
+  --color-background: #ffffff;
+  --color-text: #111111;
+  --color-secondary-text: #555;
+  --color-card-bg: #f5f5f5;
+  --color-nav-bg: rgba(255, 255, 255, 0.95);
+  --color-input-bg: #eeeeee;
+  --color-input-border: #ccc;
+  --color-title: #E50914; /* Keep Red accent for contrast */
+  --color-link-hover: #E50914;
+  --color-logo: #E50914;
+  --color-skeleton-bg: #e0e0e0;
+  --color-skeleton-shine: rgba(0, 0, 0, 0.1);
+}
+
+/* ------------------------------------------------ */
+/* --- GLOBAL STYLES (Use variables) --- */
+/* ------------------------------------------------ */
+
+body {
+  font-family: Arial, sans-serif;
+  /* Use CSS variables for theme switching */
+  background: radial-gradient(circle at top, var(--color-card-bg) 0%, var(--color-background) 100%);
+  color: var(--color-text);
+  margin: 0;
+  transition: background-color 0.5s, color 0.5s; /* Smooth theme transition */
+}
+
 .nav-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
-  background-color: #000;
+  background-color: var(--color-nav-bg); 
+  position: sticky;
+  top: 0;
+  z-index: 1000; 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #E50914; /* Netflix Red */
+  font-size: 1.8rem; 
+  font-weight: 900;
+  color: var(--color-logo); 
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 25px; 
 }
 
 .nav-links a {
-  color: #f5f5f5;
-  margin-left: 20px;
+  color: var(--color-secondary-text);
   text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: var(--color-link-hover); 
 }
 
 /* NEW: Active link style */
 .nav-links a.active-link {
-  color: white; 
+  color: var(--color-text); 
   font-weight: bold;
-  border-bottom: 2px solid #E50914; 
+  border-bottom: 2px solid var(--color-title); 
   padding-bottom: 2px;
 }
 
@@ -39,17 +101,25 @@
   margin-top: 20px;
 }
 
+/* --- Media Card Enhancements (Shadows and Polish) --- */
 .media-card {
   position: relative;
-  background-color: #222;
+  background-color: var(--color-card-bg); /* Use variable */
   border-radius: 8px;
   overflow: hidden;
-  transition: transform 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); 
 }
 
 .media-card:hover {
   transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(229, 9, 20, 0.5); 
   z-index: 10;
+}
+
+.media-card .card-info {
+    padding: 15px;
+    color: var(--color-text);
 }
 
 .card-image {
@@ -63,7 +133,7 @@
   position: absolute;
   top: 10px;
   left: 10px;
-  background-color: #E50914;
+  background-color: var(--color-title);
   color: white;
   padding: 2px 8px;
   border-radius: 4px;
@@ -71,288 +141,10 @@
   font-weight: bold;
 }
 
-.watchlist-btn {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  background-color: #444;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.watchlist-btn:hover {
-  background-color: #666;
-}
-
-.watchlist-btn.added {
-  background-color: lightgreen;
-}
-
-/* --- Login/Signup Page Styles --- */
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.login-box {
-  background-color: #141414; 
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 400px; 
-  text-align: center;
-}
-
-.login-title {
-  color: antiquewhite;
-  font-size: 1.8rem;
-  margin-bottom: 30px;
-  font-weight: bold;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.login-input {
-  padding: 15px;
-  background-color: #333; 
-  color: antiquewhite;
-  border: 1px solid #555;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.login-input::placeholder {
-  color: #aaa;
-}
-
-.login-btn {
-  background-color: #E50914; 
-  color: white;
-  padding: 15px;
-  border: none;
-  border-radius: 4px;
-  font-size: 1.1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.login-btn:hover {
-  background-color: #f40612;
-}
-
-.login-signup {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #aaa;
-}
-
-.login-signup a {
-  color: #E50914; 
-  text-decoration: none;
-}
-
-/* --- Controls/Filter Bar Styles --- */
-
-.controls-bar {
-  display: flex;
-  flex-direction: column; 
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 15px;
-  background-color: #333;
-  color: antiquewhite;
-  border: 1px solid #555;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-.search-input::placeholder {
-  color: #aaa;
-}
-
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap; 
-  padding-bottom: 5px;
-}
-
-.filter-btn {
-  background-color: #333;
-  color: #fff;
-  border: 1px solid #555;
-  padding: 8px 15px;
-  border-radius: 20px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: background-color 0.2s, border-color 0.2s;
-  white-space: nowrap; 
-}
-
-.filter-btn:hover {
-  background-color: #444;
-}
-
-.filter-btn.active-filter {
-  background-color: #E50914; 
-  border-color: #E50914;
-  font-weight: bold;
-}
-
-@media (min-width: 768px) {
-  .controls-bar {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .search-input {
-    width: 300px; 
-  }
-}
-
-/* --- Media Row Styles (NEW) --- */
-
-.media-row-container {
-    margin-top: 30px;
-    margin-bottom: 40px;
-}
-
-.row-title {
-    font-size: 1.6rem;
-    font-weight: bold;
-    color: white;
-    margin-bottom: 15px;
-}
-
-/* Horizontal scrolling wrapper */
-.media-row-content {
-    display: flex;
-    overflow-x: scroll; 
-    overflow-y: hidden;
-    gap: 15px; 
-    padding-bottom: 20px; 
-    padding-right: 40px; 
-}
-
-/* Ensure Media Cards maintain a fixed size in the row */
-.media-row-content .media-card {
-    min-width: 200px;
-    width: 200px;
-    flex-shrink: 0; 
-}
-
-/* Hide scrollbar for a cleaner OTT look */
-.media-row-content::-webkit-scrollbar {
-    height: 8px;
-}
-
-.media-row-content::-webkit-scrollbar-thumb {
-    background: #E50914; 
-    border-radius: 10px;
-}
-
-/* --- Empty Watchlist Message --- */
-.empty-message {
-  margin-top: 40px;
-  font-size: 1.2rem;
-  color: #aaa;
-  text-align: center;
-}
-
-body {
-  background: radial-gradient(circle at top, #1c1c1c 0%, #000000 100%);
-}
-
-.nav-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-  background-color: rgba(0, 0, 0, 0.85); /* Semi-transparent black */
-  position: sticky;
-  top: 0;
-  z-index: 1000; /* Ensure it stays on top */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-}
-
-.logo {
-  font-size: 1.8rem; /* Slightly larger logo */
-  font-weight: 900;
-  color: #E50914; 
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 25px; /* Increase spacing */
-}
-
-.nav-links a {
-  color: #f5f5f5;
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-links a:hover {
-    color: #E50914; /* Red hover effect */
-}
-
-/* NEW: Active link style */
-.nav-links a.active-link {
-  color: white; 
-  font-weight: bold;
-  border-bottom: 2px solid #E50914; 
-  padding-bottom: 2px;
-}
-
-.main-content {
-  padding: 20px 40px;
-}
-
-/* --- Media Card Enhancements (Shadows and Polish) --- */
-.media-card {
-  position: relative;
-  background-color: #2e2e2e; /* Slightly lighter card background */
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4); /* Deeper shadow */
-}
-
-.media-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 15px 30px rgba(229, 9, 20, 0.5); /* Red shadow on hover */
-  z-index: 10;
-}
-
-.media-card .card-info {
-    padding: 15px;
-}
-
-.card-image {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
 /* --- Interactive Button Enhancements --- */
 .watchlist-btn {
   width: 100%;
-  padding: 10px; /* Bigger button */
+  padding: 10px; 
   border: none;
   border-radius: 4px;
   font-size: 0.95rem;
@@ -380,7 +172,190 @@ body {
   background: linear-gradient(180deg, #42a142 0%, #328b32 100%);
 }
 
-/* --- Profile Menu Styles (New) --- */
+/* --- Login/Signup Page Styles --- */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-box {
+  background-color: var(--color-card-bg); 
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 400px; 
+  text-align: center;
+}
+
+.login-title {
+  color: var(--color-title);
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  font-weight: bold;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-input {
+  padding: 15px;
+  background-color: var(--color-input-bg); 
+  color: var(--color-text);
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.login-input::placeholder {
+  color: var(--color-secondary-text);
+}
+
+.login-btn {
+  background-color: var(--color-title); 
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-btn:hover {
+  background-color: #f40612;
+}
+
+.login-signup {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--color-secondary-text);
+}
+
+.login-signup a {
+  color: var(--color-title); 
+  text-decoration: none;
+}
+
+/* --- Controls/Filter Bar Styles --- */
+
+.controls-bar {
+  display: flex;
+  flex-direction: column; 
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: var(--color-input-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-input-border);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.search-input::placeholder {
+  color: var(--color-secondary-text);
+}
+
+.filter-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; 
+  padding-bottom: 5px;
+}
+
+.filter-btn {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 8px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s, border-color 0.2s;
+  white-space: nowrap; 
+}
+
+.filter-btn:hover {
+  background-color: #444;
+}
+
+.filter-btn.active-filter {
+  background-color: var(--color-title); 
+  border-color: var(--color-title);
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .controls-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .search-input {
+    width: 300px; 
+  }
+}
+
+/* --- Media Row Styles (NEW) --- */
+
+.media-row-container {
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+
+.row-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: var(--color-text);
+    margin-bottom: 15px;
+}
+
+/* Horizontal scrolling wrapper */
+.media-row-content {
+    display: flex;
+    overflow-x: scroll; 
+    overflow-y: hidden;
+    gap: 15px; 
+    padding-bottom: 20px; 
+    padding-right: 40px; 
+}
+
+/* Ensure Media Cards maintain a fixed size in the row */
+.media-row-content .media-card {
+    min-width: 200px;
+    width: 200px;
+    flex-shrink: 0; 
+}
+
+/* Hide scrollbar for a cleaner OTT look */
+.media-row-content::-webkit-scrollbar {
+    height: 8px;
+}
+
+.media-row-content::-webkit-scrollbar-thumb {
+    background: var(--color-title); 
+    border-radius: 10px;
+}
+
+/* --- Empty Watchlist Message --- */
+.empty-message {
+  margin-top: 40px;
+  font-size: 1.2rem;
+  color: var(--color-secondary-text);
+  text-align: center;
+}
+
 .profile-menu-container {
     position: relative;
 }
@@ -392,7 +367,7 @@ body {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: white;
+    color: var(--color-text);
     font-size: 1rem;
     padding: 5px 10px;
     border-radius: 4px;
@@ -408,7 +383,7 @@ body {
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #E50914; /* Red border */
+    border: 2px solid var(--color-title); 
 }
 
 .profile-dropdown {
@@ -416,24 +391,24 @@ body {
     top: 100%; 
     right: 0;
     min-width: 200px;
-    background-color: #1a1a1a; 
-    border: 1px solid #333;
+    background-color: var(--color-card-bg); 
+    border: 1px solid var(--color-input-border);
     border-radius: 8px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
     z-index: 2000; 
     margin-top: 10px;
-    padding: 0; /* 💡 FIX: REMOVED PADDING HERE */
-    overflow: hidden; /* 💡 FIX: Ensures hover effect stays inside border-radius */
+    padding: 0; 
+    overflow: hidden; 
 }
 
 .dropdown-item {
     display: block;
     width: 100%;
-    padding: 10px 15px; /* 💡 FIX: Applied horizontal padding here */
+    padding: 10px 15px; 
     text-align: left;
     background: none;
     border: none;
-    color: white;
+    color: var(--color-text);
     text-decoration: none;
     font-size: 0.95rem;
     cursor: pointer;
@@ -441,23 +416,23 @@ body {
 }
 
 .dropdown-item:hover, .dropdown-item:focus {
-    background-color: #333;
+    background-color: var(--color-input-bg);
 }
 
 .profile-info-header {
     pointer-events: none; 
-    padding: 10px 15px 5px; /* Added back padding here */
+    padding: 10px 15px 5px; 
     opacity: 0.8;
 }
 
 .dropdown-divider {
     height: 1px;
-    background-color: #333;
+    background-color: var(--color-input-border);
     margin: 5px 0;
 }
 
 .logout-btn-option {
-    color: #E50914; 
+    color: var(--color-title); 
     font-weight: bold;
 }
 
@@ -477,7 +452,6 @@ body {
 
 
 .hero-carousel-wrapper {
-    /* ... (unchanged styles) ... */
     position: relative;
     width: 100vw; 
     left: 50%;
@@ -492,13 +466,11 @@ body {
 .hero-carousel-track {
     display: flex;
     height: 100%;
-    /* 💡 FIX: Set the width dynamically to hold 10 slides (1000vw) */
     width: 1000vw; 
-    /* NOTE: You should adjust 1000vw if you ever fetch more or fewer than 10 top movies */
 }
 
 .hero-slide {
-    width: 100vw; /* Each slide takes up the full viewport width */
+    width: 100vw; 
     height: 100%;
     flex-shrink: 0;
     position: relative;
@@ -509,7 +481,7 @@ body {
     height: 100%;
     background-size: cover;
     background-position: center;
-    filter: brightness(0.7); /* Darken image slightly */
+    filter: brightness(0.7); 
 }
 
 .hero-overlay {
@@ -518,7 +490,6 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    /* Gradient to fade to black at the bottom for readability and blending */
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.7) 100%);
 }
 
@@ -529,6 +500,7 @@ body {
     padding-bottom: 50px;
     max-width: 500px;
     z-index: 10;
+    color: var(--color-text); /* Use variable for text */
 }
 
 .hero-title {
@@ -604,14 +576,14 @@ body {
 }
 
 .dot.active-dot {
-    background-color: #E50914; /* Stream-Verse Red */
+    background-color: var(--color-title); 
     transform: scale(1.2);
 }
 
 /* --- Responsive Adjustments for Hero --- */
 @media (max-width: 768px) {
     .hero-carousel-wrapper {
-        height: 400px; /* Shorter height on mobile */
+        height: 400px; 
     }
     .hero-content {
         left: 20px;
@@ -622,7 +594,7 @@ body {
         font-size: 2.5rem;
     }
     .hero-description {
-        display: none; /* Hide description on small screens */
+        display: none; 
     }
     .hero-details {
         font-size: 0.9rem;
@@ -633,34 +605,34 @@ body {
     max-width: 900px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #1a1a1a;
+    background-color: var(--color-card-bg);
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .page-title {
     font-size: 2.5rem;
-    color: #E50914;
+    color: var(--color-title);
     margin-bottom: 5px;
-    border-bottom: 2px solid #333;
+    border-bottom: 2px solid var(--color-input-border);
     padding-bottom: 10px;
 }
 
 .page-subtitle {
     font-size: 1rem;
-    color: #aaa;
+    color: var(--color-secondary-text);
     margin-bottom: 30px;
 }
 
 .settings-section {
     margin-bottom: 40px;
     padding: 20px 0;
-    border-top: 1px solid #333;
+    border-top: 1px solid var(--color-input-border);
 }
 
 .section-title {
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--color-text);
     margin-bottom: 20px;
 }
 
@@ -669,8 +641,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 15px 0;
-    border-bottom: 1px solid #222;
-    color: #ddd;
+    border-bottom: 1px solid var(--color-input-border);
+    color: var(--color-text);
     font-size: 1.1rem;
 }
 
@@ -679,7 +651,7 @@ body {
 }
 
 .highlight-text {
-    color: #E50914;
+    color: var(--color-title);
     font-weight: bold;
 }
 
@@ -693,7 +665,7 @@ body {
 }
 
 .primary-btn {
-    background-color: #E50914;
+    background-color: var(--color-title);
     color: white;
 }
 
@@ -704,9 +676,9 @@ body {
 
 .settings-select {
     padding: 8px;
-    background-color: #333;
-    color: white;
-    border: 1px solid #555;
+    background-color: var(--color-input-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-input-border);
     border-radius: 4px;
     font-size: 1rem;
 }
@@ -750,7 +722,7 @@ body {
 }
 
 input:checked + .slider {
-  background-color: #E50914;
+  background-color: var(--color-title);
 }
 
 input:checked + .slider:before {
@@ -765,4 +737,68 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* ------------------------------------------------ */
+/* --- 💡 NEW: SKELETON LOADING STYLES --- */
+/* ------------------------------------------------ */
+
+/* Skeleton Card Structure (Mimics media-card) */
+.media-card-skeleton {
+    width: 200px;
+    min-width: 200px;
+    flex-shrink: 0;
+    background-color: var(--color-card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    /* Apply the animation to the skeleton card */
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* The actual skeleton blocks */
+.skeleton-image {
+    width: 100%;
+    height: 300px; /* Standard card height */
+    background-color: var(--color-skeleton-bg);
+}
+
+.skeleton-info {
+    padding: 15px;
+}
+
+.skeleton-line {
+    height: 12px;
+    margin-bottom: 8px;
+    background-color: var(--color-skeleton-bg);
+    border-radius: 4px;
+}
+
+.skeleton-line.full {
+    width: 90%;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+.skeleton-btn {
+    height: 36px;
+    margin: 0 15px 15px 15px;
+    background-color: var(--color-skeleton-bg);
+    border-radius: 4px;
+}
+
+/* Optional: Animation for a subtle loading pulse effect */
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.8;
+    }
 }

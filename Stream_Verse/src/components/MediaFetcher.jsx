@@ -1,7 +1,8 @@
 // src/components/MediaFetcher.jsx
 import React, { useState, useEffect } from 'react';
-import MediaFeed from './MediaFeed'; 
-import { mediaItems as fallbackData } from '../data/mediaData'; // Fallback data
+import MediaFeed from './MediaFeed.jsx'; 
+import MediaSkeletonCard from './MediaSkeletonCard.jsx'; // IMPORT NEW SKELETON
+import { mediaItems as fallbackData } from '../data/mediaData.js'; // Fallback data
 
 // Replace with your real key
 const TMDB_API_KEY = '9577a6de771a0bd770051256e465efc8'; 
@@ -107,14 +108,31 @@ const MediaFetcher = ({ onDataFetched, ...props }) => {
   }, [onDataFetched]); // Added dependency to suppress warnings
 
   if (isLoading) {
-    return <h2 className="main-content">Loading Stream-Verse library...</h2>;
+    // 💡 KEY CHANGE: Render the skeleton loading state
+    return (
+        <div className="main-content">
+            <h2 className="loading-title">Loading Stream-Verse library...</h2>
+            {/* Render a grid of 10 skeletons */}
+            <div className="media-grid media-grid-skeleton">
+                {Array.from({ length: 10 }).map((_, index) => (
+                    <MediaSkeletonCard key={index} />
+                ))}
+            </div>
+        </div>
+    );
+  }
+  
+  // Display error message if present but data still loaded (e.g., fallback data)
+  if (error) {
+    // Display the error as a subtle banner
+    console.warn(error);
   }
   
   return (
     <MediaFeed 
       dataRows={dataRows} 
-      userWatchlist={props.userWatchlist} // Explicitly pass userWatchlist down
-      onToggleWatchlist={props.onToggleWatchlist} // Explicitly pass toggle function down
+      userWatchlist={props.userWatchlist} 
+      onToggleWatchlist={props.onToggleWatchlist} 
     />
   );
 };

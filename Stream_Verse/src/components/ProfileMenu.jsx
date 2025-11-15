@@ -1,9 +1,12 @@
 // src/components/ProfileMenu.jsx
 import React, { useState } from 'react';
+// IMPORT useTheme hook
+import { useTheme } from '../contexts/ThemeContext.jsx'; 
 
 // FIX: Accept new handler props
 const ProfileMenu = ({ onLogout, username, onManageProfile, onSettings }) => { 
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme(); // Use Theme Hook
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -44,6 +47,17 @@ const ProfileMenu = ({ onLogout, username, onManageProfile, onSettings }) => {
           
           <div className="dropdown-divider"></div>
 
+          {/* Theme Toggle Button (NEW) */}
+          <button 
+            className="dropdown-item" 
+            onClick={() => handleProfileClick(toggleTheme)}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          >
+            {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+          
+          <div className="dropdown-divider"></div>
+          
           {/* FIX: Use onClick to call new handlers */}
           <a href="#" className="dropdown-item" onClick={() => handleProfileClick(onManageProfile)}>
             Manage Profile
