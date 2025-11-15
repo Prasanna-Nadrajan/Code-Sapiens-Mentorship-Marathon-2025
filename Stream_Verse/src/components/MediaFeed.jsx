@@ -1,11 +1,11 @@
 // src/components/MediaFeed.jsx
 import React, { useState } from 'react';
-import MediaRow from './MediaRow';
-import MediaCard from './MediaCard'; 
-import HeroCarousel from './HeroCarousel'; 
+import MediaRow from './MediaRow.jsx'; // FIX: Explicitly use .jsx
+import MediaCard from './MediaCard.jsx'; // FIX: Explicitly use .jsx
+import HeroCarousel from './HeroCarousel.jsx'; // FIX: Explicitly use .jsx
 
-// 💡 NEW: Accept dataRows instead of a single mediaList
-const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
+// 庁 NEW: Accept dataRows, userProgress, and onToggleProgress
+const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist, userProgress, onToggleProgress }) => {
   // Use the movies from the first row as the main list for search
   const mainMediaList = dataRows[0]?.movies || []; 
 
@@ -17,14 +17,14 @@ const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
   );
 
   // Separate the first row (Hero) from the rest of the rows
-  // 💡 FIX 1: Safely access dataRows[0] only if dataRows has elements
+  // 庁 FIX 1: Safely access dataRows[0] only if dataRows has elements
   const heroMovies = dataRows.length > 0 ? dataRows[0].movies : [];
   const categorizedRows = dataRows.slice(1); 
 
   return (
     <div className="media-feed-container">
       
-      {/* 💡 FIX 2: Only render the HeroCarousel if there is no search AND movies exist. */}
+      {/* 庁 FIX 2: Only render the HeroCarousel if there is no search AND movies exist. */}
       {searchTerm.length === 0 && heroMovies.length > 0 && (
           <HeroCarousel movies={heroMovies} />
       )}
@@ -43,7 +43,7 @@ const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
       </div>
 
       
-      {/* 💡 RENDER LOGIC: If searching, show a grid. If not, show the rows. */}
+      {/* 庁 RENDER LOGIC: If searching, show a grid. If not, show the rows. */}
       {searchTerm.length > 0 ? (
         <div className="media-grid-search">
           <h2>Search Results ({searchResults.length} items)</h2>
@@ -54,6 +54,8 @@ const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
                     item={item} 
                     userWatchlist={userWatchlist} 
                     onToggleWatchlist={onToggleWatchlist} 
+                    userProgress={userProgress} // 💡 NEW: Pass progress
+                    onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
                 />
             ))}
           </div>
@@ -68,6 +70,8 @@ const MediaFeed = ({ dataRows, userWatchlist, onToggleWatchlist }) => {
               movies={row.movies}
               userWatchlist={userWatchlist}
               onToggleWatchlist={onToggleWatchlist}
+              userProgress={userProgress} // 💡 NEW: Pass progress
+              onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
             />
           ))}
         </div>

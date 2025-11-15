@@ -1,7 +1,8 @@
 // src/components/MediaFetcher.jsx
 import React, { useState, useEffect } from 'react';
+// FIX: Explicitly add file extensions to all local imports
 import MediaFeed from './MediaFeed.jsx'; 
-import MediaSkeletonCard from './MediaSkeletonCard.jsx'; // IMPORT NEW SKELETON
+import MediaSkeletonCard from './MediaSkeletonCard.jsx'; 
 import { mediaItems as fallbackData } from '../data/mediaData.js'; // Fallback data
 
 // Replace with your real key
@@ -33,7 +34,14 @@ const cleanAndMapData = (results, genreName) => {
   }));
 };
 
-const MediaFetcher = ({ onDataFetched, ...props }) => {
+// 💡 FIX APPLIED HERE: Destructure ALL necessary props explicitly instead of using `...props`
+const MediaFetcher = ({ 
+    onDataFetched, 
+    userWatchlist, 
+    onToggleWatchlist, 
+    userProgress, 
+    onToggleProgress 
+}) => {
   const [dataRows, setDataRows] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -131,8 +139,10 @@ const MediaFetcher = ({ onDataFetched, ...props }) => {
   return (
     <MediaFeed 
       dataRows={dataRows} 
-      userWatchlist={props.userWatchlist} 
-      onToggleWatchlist={props.onToggleWatchlist} 
+      userWatchlist={userWatchlist} 
+      onToggleWatchlist={onToggleWatchlist} 
+      userProgress={userProgress} 
+      onToggleProgress={onToggleProgress} 
     />
   );
 };

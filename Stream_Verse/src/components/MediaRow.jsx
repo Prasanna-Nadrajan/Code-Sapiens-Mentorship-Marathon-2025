@@ -1,8 +1,9 @@
 // src/components/MediaRow.jsx
 import React from 'react';
-import MediaCard from './MediaCard';
+import MediaCard from './MediaCard.jsx'; // FIX: Explicitly use .jsx
 
-const MediaRow = ({ title, movies, userWatchlist, onToggleWatchlist }) => {
+// Accept userProgress and onToggleProgress
+const MediaRow = ({ title, movies, userWatchlist, onToggleWatchlist, userProgress, onToggleProgress }) => {
   if (!movies || movies.length === 0) {
     return null;
   }
@@ -19,6 +20,8 @@ const MediaRow = ({ title, movies, userWatchlist, onToggleWatchlist }) => {
             item={item}
             userWatchlist={userWatchlist}
             onToggleWatchlist={onToggleWatchlist}
+            userProgress={userProgress} // 💡 NEW: Pass progress
+            onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
           />
         ))}
       </div>

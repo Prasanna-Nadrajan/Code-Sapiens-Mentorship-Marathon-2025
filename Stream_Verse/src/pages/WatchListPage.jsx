@@ -2,7 +2,7 @@
 import React from 'react';
 import MediaCard from '../components/MediaCard'; 
 
-const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist }) => {
+const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist, userProgress, onToggleProgress }) => {
   
   // Get the media objects that are in the user's watchlist
   let wishlistItems = (fullMediaCatalog || []).filter(item => 
@@ -36,6 +36,8 @@ const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist }) =
               item={item}
               userWatchlist={userWatchlist}
               onToggleWatchlist={onToggleWatchlist}
+              userProgress={userProgress} // 💡 NEW: Pass progress
+              onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
             />
           ))}
         </div>

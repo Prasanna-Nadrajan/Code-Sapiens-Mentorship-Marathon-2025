@@ -15,6 +15,9 @@
   --color-logo: #E50914;
   --color-skeleton-bg: #2e2e2e;
   --color-skeleton-shine: rgba(255, 255, 255, 0.1);
+  --color-progress-fill: #5a5a5a;
+  --color-progress-completed: #12B883; /* Teal/Green for complete */
+  --color-watched-tag: #12B883;
 }
 
 :root[data-theme='light'] {
@@ -31,6 +34,9 @@
   --color-logo: #E50914;
   --color-skeleton-bg: #e0e0e0;
   --color-skeleton-shine: rgba(0, 0, 0, 0.1);
+  --color-progress-fill: #cccccc;
+  --color-progress-completed: #12B883;
+  --color-watched-tag: #12B883;
 }
 
 /* ------------------------------------------------ */
@@ -141,9 +147,30 @@ body {
   font-weight: bold;
 }
 
+/* 💡 NEW: Watched Tag Style */
+.watched-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: var(--color-watched-tag);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  z-index: 5;
+}
+
+/* 💡 NEW: Card Action Layout */
+.card-actions {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+}
+
 /* --- Interactive Button Enhancements --- */
-.watchlist-btn {
-  width: 100%;
+/* Base button for both watchlist and watched toggle */
+.watchlist-btn, .watched-toggle-btn {
   padding: 10px; 
   border: none;
   border-radius: 4px;
@@ -151,10 +178,15 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  flex-grow: 1;
+}
+
+
+.watchlist-btn {
   /* Fancy Button Style */
   background: linear-gradient(180deg, #444 0%, #222 100%);
   color: #f5f5f5;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .watchlist-btn:hover {
@@ -171,6 +203,37 @@ body {
 .watchlist-btn.added:hover {
   background: linear-gradient(180deg, #42a142 0%, #328b32 100%);
 }
+
+/* 💡 NEW: Watched Toggle Button Styles */
+.watched-toggle-btn {
+    background-color: #888;
+    color: white;
+}
+
+.watched-toggle-btn.completed {
+    background-color: var(--color-title); /* Red for completed/reset button */
+    color: white;
+}
+
+.watched-toggle-btn:hover {
+    opacity: 0.8;
+}
+
+/* 💡 NEW: Progress Bar Styles */
+.progress-bar-container {
+    height: 4px;
+    background-color: var(--color-progress-fill);
+    border-radius: 2px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background-color: var(--color-progress-completed);
+    transition: width 0.3s ease-in-out;
+}
+
 
 /* --- Login/Signup Page Styles --- */
 .login-container {
