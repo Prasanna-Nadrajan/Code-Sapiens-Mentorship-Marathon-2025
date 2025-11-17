@@ -1,7 +1,8 @@
+// src/components/HeroCarousel.jsx
 import React, { useState, useEffect } from 'react';
-import HeroCard from './HeroCard';
+import HeroCard from './HeroCard.jsx'; // 💡 FIX: Added .jsx extension
 
-const HeroCarousel = ({ movies }) => {
+const HeroCarousel = ({ movies, onSelectMedia }) => { // 💡 NEW: Accept onSelectMedia
   const [currentIndex, setCurrentIndex] = useState(0);
   
   // Set the automatic sliding interval (e.g., every 5 seconds)
@@ -35,7 +36,11 @@ const HeroCarousel = ({ movies }) => {
       {/* 💡 FIX: Apply the style to the track */}
       <div className="hero-carousel-track" style={transformStyle}> 
         {movies.map((item) => (
-          <HeroCard key={item.id} item={item} />
+          <HeroCard 
+            key={item.id} 
+            item={item} 
+            onSelectMedia={onSelectMedia} // 💡 NEW: Pass handler down
+          />
         ))}
       </div>
       

@@ -1,8 +1,15 @@
 // src/pages/WatchlistPage.jsx
 import React from 'react';
-import MediaCard from '../components/MediaCard'; 
+import MediaCard from '../components/MediaCard.jsx'; // 💡 FIX: Added .jsx extension
 
-const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist, userProgress, onToggleProgress }) => {
+const WatchlistPage = ({ 
+  fullMediaCatalog, 
+  userWatchlist, 
+  onToggleWatchlist, 
+  userProgress, 
+  onToggleProgress, 
+  onSelectMedia 
+}) => {
   
   // Get the media objects that are in the user's watchlist
   let wishlistItems = (fullMediaCatalog || []).filter(item => 
@@ -38,6 +45,7 @@ const WatchlistPage = ({ fullMediaCatalog, userWatchlist, onToggleWatchlist, use
               onToggleWatchlist={onToggleWatchlist}
               userProgress={userProgress} // 💡 NEW: Pass progress
               onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
+              onSelectMedia={onSelectMedia} // 💡 NEW: Pass handler
             />
           ))}
         </div>

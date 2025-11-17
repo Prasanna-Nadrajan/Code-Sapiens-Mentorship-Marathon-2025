@@ -8,7 +8,8 @@ const MediaCard = ({
   userWatchlist = [], // 💡 FIX: Default to []
   onToggleWatchlist, 
   userProgress = [], // 💡 FIX: Default to []
-  onToggleProgress 
+  onToggleProgress,
+  onSelectMedia // 💡 NEW: Accept select media handler
 }) => {
   // 1. Determine if the item's ID is present in the user's watchlist array
   const isWatching = userWatchlist.includes(item.id);
@@ -17,18 +18,29 @@ const MediaCard = ({
   const isWatched = userProgress.includes(item.id);
 
   // 3. Handler for toggling the watchlist status
-  const handleToggleWatchlist = () => {
+  const handleToggleWatchlist = (e) => {
+    e.stopPropagation(); // Stop click from bubbling up to the image
     onToggleWatchlist(item.id);
   };
 
   // 4. Handler for toggling the watched status
-  const handleToggleWatched = () => {
+  const handleToggleWatched = (e) => {
+    e.stopPropagation(); // Stop click from bubbling up to the image
     onToggleProgress(item.id);
+  };
+  
+  // 5. Handler for selecting the media to see details
+  const handleSelect = () => {
+    onSelectMedia(item.id);
   };
 
   return (
-    <div className="media-card">
-      <img src={item.imageUrl} alt={`${item.title} poster`} className="card-image" />
+    <div className="media-card" onClick={handleSelect}>
+      <img 
+        src={item.imageUrl} 
+        alt={`${item.title} poster`} 
+        className="card-image" 
+      />
       
       {/* 💡 NEW: Watched Overlay/Icon (High Priority over New Tag) */}
       {isWatched && <span className="watched-tag">✔ Watched</span>}

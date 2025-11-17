@@ -2,8 +2,16 @@
 import React from 'react';
 import MediaCard from './MediaCard.jsx'; // FIX: Explicitly use .jsx
 
-// Accept userProgress and onToggleProgress
-const MediaRow = ({ title, movies, userWatchlist, onToggleWatchlist, userProgress, onToggleProgress }) => {
+// Accept userProgress, onToggleProgress, and onSelectMedia
+const MediaRow = ({ 
+  title, 
+  movies, 
+  userWatchlist, 
+  onToggleWatchlist, 
+  userProgress, 
+  onToggleProgress, 
+  onSelectMedia 
+}) => {
   if (!movies || movies.length === 0) {
     return null;
   }
@@ -22,6 +30,7 @@ const MediaRow = ({ title, movies, userWatchlist, onToggleWatchlist, userProgres
             onToggleWatchlist={onToggleWatchlist}
             userProgress={userProgress} // 💡 NEW: Pass progress
             onToggleProgress={onToggleProgress} // 💡 NEW: Pass toggle
+            onSelectMedia={onSelectMedia} // 💡 NEW: Pass handler
           />
         ))}
       </div>

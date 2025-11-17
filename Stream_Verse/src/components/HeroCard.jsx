@@ -1,7 +1,8 @@
+// src/components/HeroCard.jsx
 import React from 'react';
 
 // This component displays a single movie slide at full-screen size
-const HeroCard = ({ item }) => {
+const HeroCard = ({ item, onSelectMedia }) => { // 💡 NEW: Accept onSelectMedia
   // Use a high-quality poster image path for the background
   const backdropUrl = item.imageUrl.replace('/w200', '/w1280'); 
 
@@ -31,7 +32,8 @@ const HeroCard = ({ item }) => {
           <button className="play-btn">
             ▶ Play
           </button>
-          <button className="more-info-btn">
+          {/* 💡 NEW: Fire onSelectMedia when "More Info" is clicked */}
+          <button className="more-info-btn" onClick={() => onSelectMedia(item.id)}>
             More Info
           </button>
         </div>

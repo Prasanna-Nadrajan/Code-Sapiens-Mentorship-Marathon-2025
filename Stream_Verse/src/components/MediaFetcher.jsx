@@ -40,7 +40,8 @@ const MediaFetcher = ({
     userWatchlist, 
     onToggleWatchlist, 
     userProgress, 
-    onToggleProgress 
+    onToggleProgress,
+    onSelectMedia // 💡 NEW: Accept select handler
 }) => {
   const [dataRows, setDataRows] = useState([]); 
   const [isLoading, setIsLoading] = useState(true);
@@ -143,6 +144,7 @@ const MediaFetcher = ({
       onToggleWatchlist={onToggleWatchlist} 
       userProgress={userProgress} 
       onToggleProgress={onToggleProgress} 
+      onSelectMedia={onSelectMedia} // 💡 NEW: Pass handler down
     />
   );
 };

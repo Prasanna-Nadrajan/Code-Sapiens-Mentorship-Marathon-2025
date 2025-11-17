@@ -8,44 +8,135 @@ import ManageProfilePage from './pages/ManageProfilePage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';  
 import SignupPage from './pages/SignupPage.jsx'; 
 import WatchlistPage from './pages/WatchlistPage.jsx'; 
+import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
+import MediaPlayer from './components/MediaPlayer.jsx'; 
+import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
 import useUserManagement from './hooks/useUserManagement.js';
 import useUserWatchlist from './hooks/useUserWatchlist.js'; 
 import useUserProgress from './hooks/useUserProgress.js';
 import ProfileMenu from './components/ProfileMenu.jsx';
 
+// 💡 NEW: Keys for storing auth state in localStorage
+const AUTH_STORAGE_KEY_ID = 'streamverse-auth-userId';
+const AUTH_STORAGE_KEY_NAME = 'streamverse-auth-userName';
+
 // Separated AppContent to use the ThemeContext
 const AppContent = () => {
-  const [currentPage, setCurrentPage] = useState('login'); 
-  const [currentUserId, setCurrentUserId] = useState(null); 
-  const [currentUserName, setCurrentUserName] = useState(null);
+  
+  // 💡 NEW: Function to read initial state from localStorage
+  const getInitialState = () => {
+    try {
+      const storedUserId = localStorage.getItem(AUTH_STORAGE_KEY_ID);
+      const storedUserName = localStorage.getItem(AUTH_STORAGE_KEY_NAME);
+
+      if (storedUserId && storedUserName) {
+        // If user is found in storage, start them at the home page
+        return {
+          page: 'home',
+          id: storedUserId,
+          name: storedUserName
+        };
+      }
+    } catch (e) {
+      console.error("Failed to read auth from storage", e);
+    }
+    // Default (logged out) state
+    return { page: 'login', id: null, name: null };
+  };
+
+  // 💡 NEW: Initialize state from localStorage function
+  const [initialState] = useState(getInitialState);
+  const [currentPage, setCurrentPage] = useState(initialState.page); 
+  const [currentUserId, setCurrentUserId] = useState(initialState.id); 
+  const [currentUserName, setCurrentUserName] = useState(initialState.name);
+  
   const [fullMediaCatalog, setFullMediaCatalog] = useState([]); 
+  const [selectedMediaId, setSelectedMediaId] = useState(null); 
+  const [isPlaying, setIsPlaying] = useState(false); 
+  const [showIntro, setShowIntro] = useState(true); // 💡 NEW: State for Intro
   const { allUsers, registerUser } = useUserManagement(); 
   // const { theme } = useTheme(); // Removed unused theme access here
 
   const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
   const { userProgress, toggleProgressItem } = useUserProgress(currentUserId);
 
-  // Function to switch to home page AND set the logged-in user's ID
-  const handleLogin = (userId) => { 
-    setCurrentUserId(userId);
-    // Find the user object to get their username
-    const user = allUsers.find(u => u.id === userId || u.id === String(userId));
-    setCurrentUserName(user ? user.username : 'Guest'); 
-    setCurrentPage('home'); 
+  // 💡 NEW: Handler to show media details
+  const handleSelectMedia = (mediaId) => {
+    setSelectedMediaId(mediaId);
+    setIsPlaying(false); // Ensure player is closed when selecting new media
   };
 
+  // 💡 NEW: Handler to clear media details (go back)
+  const handleClearSelectedMedia = () => {
+    setSelectedMediaId(null);
+    setIsPlaying(false); // Ensure player is closed
+  };
+  
+  // 💡 NEW: Handlers to open/close the player
+  const handlePlayMedia = () => setIsPlaying(true);
+  const handleClosePlayer = () => setIsPlaying(false);
+
+  // Function to switch to home page AND set the logged-in user's ID
+  const handleLogin = (userId) => { 
+    const user = allUsers.find(u => u.id === userId || u.id === String(userId));
+    const userName = user ? user.username : 'Guest';
+
+    try {
+      // 💡 NEW: Save auth state to localStorage
+      localStorage.setItem(AUTH_STORAGE_KEY_ID, userId);
+      localStorage.setItem(AUTH_STORAGE_KEY_NAME, userName);
+      
+      // Set state
+      setCurrentUserId(userId);
+      setCurrentUserName(userName); 
+      setCurrentPage('home'); 
+      handleClearSelectedMedia(); 
+    } catch (e) {
+      console.error("Failed to save auth to storage", e);
+    }
+  };
+
+  // 💡 NEW: This function now also serves as "logout"
   const handleGoToLogin = () => {
+    try {
+      // 💡 NEW: Clear auth state from localStorage
+      localStorage.removeItem(AUTH_STORAGE_KEY_ID);
+      localStorage.removeItem(AUTH_STORAGE_KEY_NAME);
+    } catch (e) {
+       console.error("Failed to clear auth from storage", e);
+    }
+    
+    // Reset state
     setCurrentUserId(null); 
     setCurrentUserName(null); 
     setCurrentPage('login');
+    handleClearSelectedMedia(); 
   };
   
-  const handleGoToSignup = () => setCurrentPage('signup');
-  const handleGoToWatchlist = () => setCurrentPage('watchlist'); 
-  const handleGoToHome = () => setCurrentPage('home');
+  const handleGoToSignup = () => {
+    setCurrentPage('signup');
+    handleClearSelectedMedia(); // Clear detail view
+  };
 
-  const handleGoToManageProfile = () => setCurrentPage('manage_profile');
-  const handleGoToSettings = () => setCurrentPage('settings');
+  const handleGoToWatchlist = () => {
+    setCurrentPage('watchlist');
+    handleClearSelectedMedia(); // Clear detail view
+  };
+
+  const handleGoToHome = () => {
+    setCurrentPage('home');
+    handleClearSelectedMedia(); // Clear detail view
+  };
+
+  const handleGoToManageProfile = () => {
+    setCurrentPage('manage_profile');
+    handleClearSelectedMedia(); // Clear detail view
+  };
+  
+  const handleGoToSettings = () => {
+    setCurrentPage('settings');
+    handleClearSelectedMedia(); // Clear detail view
+  };
 
   // FIX: Wrap the handler with useCallback to ensure it's not recreated on every render
   const handleMediaDataFetched = useCallback((data) => { 
@@ -54,6 +145,44 @@ const AppContent = () => {
   }, []); 
 
   const renderPage = () => {
+    // 💡 NEW: Show Intro page first
+    if (showIntro) {
+      return <IntroPage onAnimationEnd={() => setShowIntro(false)} />;
+    }
+
+    const selectedItem = fullMediaCatalog.find(item => item.id === selectedMediaId);
+
+    // 💡 NEW: Check if we should render the player (highest priority)
+    if (isPlaying && selectedItem) {
+      return (
+        <MediaPlayer 
+          item={selectedItem}
+          onClose={handleClosePlayer}
+        />
+      );
+    }
+
+    // 💡 NEW: Check if a movie is selected first
+    if (selectedMediaId && selectedItem) {
+      // If item is found, show detail page
+      return (
+        <MediaDetailPage
+          item={selectedItem}
+          onBack={handleClearSelectedMedia} // Pass the "back" handler
+          onPlay={handlePlayMedia} // 💡 NEW: Pass the "play" handler
+          userWatchlist={userWatchlist}
+          onToggleWatchlist={toggleWatchlistItem}
+          userProgress={userProgress}
+          onToggleProgress={toggleProgressItem}
+        />
+      );
+    }
+    
+    // If item not found (e.g., bad ID), clear selection
+    if (selectedMediaId) {
+      handleClearSelectedMedia();
+    }
+
     if (currentPage === 'login') {
       return (
         <LoginPage 
@@ -105,6 +234,7 @@ const AppContent = () => {
               onDataFetched={handleMediaDataFetched} // Pass handler to update catalog
               userProgress={userProgress} // 💡 NEW: Pass user progress
               onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
+              onSelectMedia={handleSelectMedia} // 💡 NEW: Pass select handler
             />
           )}
           
@@ -116,6 +246,7 @@ const AppContent = () => {
               onToggleWatchlist={toggleWatchlistItem}
               userProgress={userProgress} // 💡 NEW: Pass user progress
               onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
+              onSelectMedia={handleSelectMedia} // 💡 NEW: Pass select handler
             />
           )}
         </main>
