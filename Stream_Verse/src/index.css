@@ -1,6 +1,20 @@
+/* Import a modern, clean font like Inter */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap');
+
 body {
-  font-family: Arial, sans-serif;
-  background-color: black;
+  /* Use Inter as the primary font */
+  font-family: 'Inter', Arial, sans-serif;
+  
+  /* These properties make text look much smoother */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /*
+    This is a base setting.
+    The main background is controlled in App.css 
+    to take advantage of theme variables.
+  */
+  background-color: #000;
   color: antiquewhite;
   margin: 0;
 }
