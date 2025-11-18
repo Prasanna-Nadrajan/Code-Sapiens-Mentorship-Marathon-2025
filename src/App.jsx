@@ -1,20 +1,20 @@
 // src/App.jsx
 import React, { useState, useCallback, useEffect } from 'react';
 // IMPORT ThemeProvider and useTheme
-import { ThemeProvider, useTheme } from './contexts/ThemeContext'; 
-import MediaFetcher from './components/MediaFetcher'; 
-import LoginPage from './pages/LoginPage';
-import ManageProfilePage from './pages/ManageProfilePage'; 
-import SettingsPage from './pages/SettingsPage';  
-import SignupPage from './pages/SignupPage'; 
-import WatchlistPage from './pages/WatchlistPage'; 
-import MediaDetailPage from './pages/MediaDetailPage'; 
-import MediaPlayer from './components/MediaPlayer'; 
-import IntroPage from './pages/IntroPage'; // 💡 NEW: Import Intro Page
-import useUserManagement from './hooks/useUserManagement';
-import useUserWatchlist from './hooks/useUserWatchlist'; 
-import useUserProgress from './hooks/useUserProgress';
-import ProfileMenu from './components/ProfileMenu';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx'; 
+import MediaFetcher from './components/MediaFetcher.jsx'; 
+import LoginPage from './pages/LoginPage.jsx';
+import ManageProfilePage from './pages/ManageProfilePage.jsx'; 
+import SettingsPage from './pages/SettingsPage.jsx';  
+import SignupPage from './pages/SignupPage.jsx'; 
+import WatchlistPage from './pages/WatchListPage.jsx'; 
+import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
+import MediaPlayer from './components/MediaPlayer.jsx'; 
+import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
+import useUserManagement from './hooks/useUserManagement.jsx';
+import useUserWatchlist from './hooks/useUserWatchlist.jsx'; 
+import useUserProgress from './hooks/useUserProgress.jsx';
+import ProfileMenu from './components/ProfileMenu.jsx';
 
 // 💡 NEW: Keys for storing auth state in localStorage
 const INTRO_SEEN_KEY = 'streamverse-intro-seen';
