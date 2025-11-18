@@ -402,6 +402,7 @@ body {
 /* --- MEDIA FEED / ROWS --- */
 /* ------------------------------------------------ */
 .media-feed-container {
+    margin-top: 20px;
   /* This container now just holds the feed */
 }
 
@@ -546,6 +547,7 @@ body {
 }
 
 .profile-menu-container[data-open='true'] .profile-dropdown {
+  opacity: 1;
   /* This selector won't work as 'open' isn't passed as data-attr */
   /* But the CSS animation below works on mount */
 }
@@ -694,7 +696,7 @@ body {
     line-height: 1.5;
     /* 🎨 NEW: Clamp description to 3 lines */
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    /* -webkit-line-clamp: 3; */
     -webkit-box-orient: vertical;  
     overflow: hidden;
 }
@@ -1199,10 +1201,19 @@ input:checked + .slider:before {
   align-items: center;
   z-index: 10000;
   overflow: hidden;
-  animation: fade-out-bg 1s ease-in 2.8s forwards;
+  /* Keep the fade-out animation at the end */
+  animation: fade-out-bg 2s ease-in 6s forwards; 
+  /* NOTE: Change 2.8s to match video duration - 1s, or remove entirely if video is controlled by onEnded */
 }
 
-.intro-logo-container {
+.intro-video {
+  /* Ensure the video fills the screen completely */
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Cover the entire container, potentially cropping the video */
+}
+
+/* .intro-logo-container {
   position: relative;
   font-family: 'Arial Black', "Helvetica Bold", sans-serif;
   font-size: 25rem;
@@ -1267,7 +1278,7 @@ input:checked + .slider:before {
   100% { 
     text-shadow: 0 0 20px rgba(229, 9, 20, 0.5); 
   }
-}
+} */
 
 @keyframes fade-out-bg {
   from {

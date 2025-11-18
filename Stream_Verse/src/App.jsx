@@ -17,6 +17,7 @@ import useUserProgress from './hooks/useUserProgress';
 import ProfileMenu from './components/ProfileMenu';
 
 // 💡 NEW: Keys for storing auth state in localStorage
+const INTRO_SEEN_KEY = 'streamverse-intro-seen';
 const AUTH_STORAGE_KEY_ID = 'streamverse-auth-userId';
 const AUTH_STORAGE_KEY_NAME = 'streamverse-auth-userName';
 
@@ -28,20 +29,26 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
     try {
       const storedUserId = localStorage.getItem(AUTH_STORAGE_KEY_ID);
       const storedUserName = localStorage.getItem(AUTH_STORAGE_KEY_NAME);
+      // Check the new key: if it's 'true', the intro has been seen.
+      const introSeen = localStorage.getItem(INTRO_SEEN_KEY) === 'true'; 
 
+      let initialPage = 'login';
       if (storedUserId && storedUserName) {
-        // If user is found in storage, start them at the home page
-        return {
-          page: 'home',
-          id: storedUserId,
-          name: storedUserName
-        };
+        initialPage = 'home';
       }
+
+      return {
+        page: initialPage,
+        id: storedUserId,
+        name: storedUserName,
+        // If the intro has been seen, set showIntro to false. Otherwise, true.
+        showIntro: !introSeen, 
+      };
     } catch (e) {
-      console.error("Failed to read auth from storage", e);
+      console.error("Failed to read auth or intro from storage", e);
     }
     // Default (logged out) state
-    return { page: 'login', id: null, name: null };
+    return { page: 'login', id: null, name: null, showIntro: true };
   };
 
   // 💡 NEW: Initialize state from localStorage function
@@ -53,12 +60,23 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
   const [fullMediaCatalog, setFullMediaCatalog] = useState([]); 
   const [selectedMediaId, setSelectedMediaId] = useState(null); 
   const [isPlaying, setIsPlaying] = useState(false); 
-  const [showIntro, setShowIntro] = useState(true); // 💡 NEW: State for Intro
+  const [showIntro, setShowIntro] = useState(initialState.showIntro); // 💡 NEW: State for Intro
   const { allUsers, registerUser } = useUserManagement(); 
   // const { theme } = useTheme(); // Removed unused theme access here
 
   const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
   const { userProgress, toggleProgressItem } = useUserProgress(currentUserId);
+
+  const handleIntroEnd = useCallback(() => {
+    // 1. Set the flag in localStorage so the intro is skipped next time
+    try {
+        localStorage.setItem(INTRO_SEEN_KEY, 'true');
+    } catch (e) {
+        console.error("Failed to set intro seen flag:", e);
+    }
+    // 2. Hide the intro screen, which will trigger the rest of the application render
+    setShowIntro(false);
+  }, []);
 
   // 💡 NEW: Handler to show media details
   const handleSelectMedia = (mediaId) => {
@@ -147,7 +165,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
   const renderPage = () => {
     // 💡 NEW: Show Intro page first
     if (showIntro) {
-      return <IntroPage onAnimationEnd={() => setShowIntro(false)} />;
+      return <IntroPage onAnimationEnd={handleIntroEnd} />;
     }
 
     const selectedItem = fullMediaCatalog.find(item => item.id === selectedMediaId);
