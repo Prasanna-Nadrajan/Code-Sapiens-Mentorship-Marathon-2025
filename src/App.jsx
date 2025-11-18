@@ -7,13 +7,13 @@ import LoginPage from './pages/LoginPage.jsx';
 import ManageProfilePage from './pages/ManageProfilePage.jsx'; 
 import SettingsPage from './pages/SettingsPage.jsx';  
 import SignupPage from './pages/SignupPage.jsx'; 
-import WatchlistPage from './pages/WatchListPage.jsx'; 
+import WatchlistPage from './pages/WatchlistPage.jsx'; 
 import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
 import MediaPlayer from './components/MediaPlayer.jsx'; 
 import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
-import useUserManagement from './hooks/useUserManagement.jsx';
-import useUserWatchlist from './hooks/useUserWatchlist.jsx'; 
-import useUserProgress from './hooks/useUserProgress.jsx';
+import useUserManagement from './hooks/useUserManagement.js';
+import useUserWatchlist from './hooks/useUserWatchlist.js'; 
+import useUserProgress from './hooks/useUserProgress.js';
 import ProfileMenu from './components/ProfileMenu.jsx';
 
 // 💡 NEW: Keys for storing auth state in localStorage
