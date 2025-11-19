@@ -11,11 +11,49 @@ import WatchlistPage from './pages/WatchlistPage.jsx';
 import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
 import MediaPlayer from './components/MediaPlayer.jsx'; 
 import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
-import Footer from './components/Footer.jsx';
+import Footer from './components/Footer.jsx'; // 💡 NEW: Import Footer Component
 import useUserManagement from './hooks/useUserManagement.js';
 import useUserWatchlist from './hooks/useUserWatchlist.js'; 
 import useUserProgress from './hooks/useUserProgress.js';
 import ProfileMenu from './components/ProfileMenu.jsx';
+
+// Inline SVG for Hamburger/Close Icon
+const MenuIcon = ({ isOpen, onClick }) => (
+  <button 
+    className="mobile-menu-toggle" 
+    onClick={onClick} 
+    aria-label={isOpen ? "Close menu" : "Open menu"}
+  >
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      width="24" 
+      height="24" 
+      viewBox="0 0 24 24" 
+      fill="none" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round" 
+      strokeLinejoin="round"
+      style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}
+    >
+      {isOpen ? (
+        // Close icon (X)
+        <React.Fragment>
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </React.Fragment>
+      ) : (
+        // Menu icon (Hamburger)
+        <React.Fragment>
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </React.Fragment>
+      )}
+    </svg>
+  </button>
+);
+
 
 // 💡 NEW: Keys for storing auth state in localStorage
 const INTRO_SEEN_KEY = 'streamverse-intro-seen';
@@ -62,11 +100,19 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
   const [selectedMediaId, setSelectedMediaId] = useState(null); 
   const [isPlaying, setIsPlaying] = useState(false); 
   const [showIntro, setShowIntro] = useState(initialState.showIntro); // 💡 NEW: State for Intro
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 💡 NEW: Mobile Menu State
   const { allUsers, registerUser } = useUserManagement(); 
   // const { theme } = useTheme(); // Removed unused theme access here
 
   const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
   const { userProgress, toggleProgressItem } = useUserProgress(currentUserId);
+  
+  // 💡 NEW: Toggle handler
+  const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev);
+  
+  // 💡 NEW: Close handler that is useful after navigation
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
 
   const handleIntroEnd = useCallback(() => {
     // 1. Set the flag in localStorage so the intro is skipped next time
@@ -83,12 +129,14 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
   const handleSelectMedia = (mediaId) => {
     setSelectedMediaId(mediaId);
     setIsPlaying(false); // Ensure player is closed when selecting new media
+    closeMobileMenu(); // Close menu on navigation
   };
 
   // 💡 NEW: Handler to clear media details (go back)
   const handleClearSelectedMedia = () => {
     setSelectedMediaId(null);
     setIsPlaying(false); // Ensure player is closed
+    closeMobileMenu(); // Close menu on navigation
   };
   
   // 💡 NEW: Handlers to open/close the player
@@ -113,6 +161,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
     } catch (e) {
       console.error("Failed to save auth to storage", e);
     }
+    closeMobileMenu(); // Close menu on login
   };
 
   // 💡 NEW: This function now also serves as "logout"
@@ -130,31 +179,37 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
     setCurrentUserName(null); 
     setCurrentPage('login');
     handleClearSelectedMedia(); 
+    closeMobileMenu(); // Close menu on logout
   };
   
   const handleGoToSignup = () => {
     setCurrentPage('signup');
     handleClearSelectedMedia(); // Clear detail view
+    closeMobileMenu(); 
   };
 
   const handleGoToWatchlist = () => {
     setCurrentPage('watchlist');
     handleClearSelectedMedia(); // Clear detail view
+    closeMobileMenu(); // Close menu after nav
   };
 
   const handleGoToHome = () => {
     setCurrentPage('home');
     handleClearSelectedMedia(); // Clear detail view
+    closeMobileMenu(); // Close menu after nav
   };
 
   const handleGoToManageProfile = () => {
     setCurrentPage('manage_profile');
     handleClearSelectedMedia(); // Clear detail view
+    closeMobileMenu(); // Close menu after nav
   };
   
   const handleGoToSettings = () => {
     setCurrentPage('settings');
     handleClearSelectedMedia(); // Clear detail view
+    closeMobileMenu(); // Close menu after nav
   };
 
   // FIX: Wrap the handler with useCallback to ensure it's not recreated on every render
@@ -221,17 +276,17 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
       );
     }
 
-    // Default (Home/MediaFeed) View
+    // Default (Home/MediaFeed) View - Handles all logged-in states
     return (
       <> 
         <header>
           <nav className="nav-bar">
             <span className="logo">Stream-Verse</span>
+            {/* Desktop Links (Hidden on mobile) */}
             <div className="nav-links">
               <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
               <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
               
-              {/* 💡 KEY CHANGE: ProfileMenu now handles theme toggle internally */}
               <ProfileMenu 
                 onLogout={handleGoToLogin} 
                 username={currentUserName} 
@@ -239,6 +294,19 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
                 onSettings={handleGoToSettings}          
               />
             </div>
+            
+            {/* 💡 NEW: Mobile Menu Toggle Button */}
+            <MenuIcon isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
+            
+            {/* 💡 NEW: Mobile Menu Overlay */}
+            <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`}>
+                 <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
+                 <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
+                 <a href="#" onClick={handleGoToManageProfile}>Manage Profile</a>
+                 <a href="#" onClick={handleGoToSettings}>Settings</a>
+                 <button className="mobile-logout-btn" onClick={handleGoToLogin}>Logout</button>
+            </div>
+            
           </nav>
         </header>
         
@@ -254,6 +322,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
               userProgress={userProgress} // 💡 NEW: Pass user progress
               onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
               onSelectMedia={handleSelectMedia} // 💡 NEW: Pass select handler
+              onPlayMedia={handlePlayMedia} // Pass play handler
             />
           )}
           
@@ -269,6 +338,8 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
             />
           )}
         </main>
+        
+        {/* 💡 NEW: Footer is added here for all logged-in views */}
         <Footer />
       </>
     );

@@ -1384,13 +1384,23 @@ input:checked + .slider:before {
 /* =========================================
    2. HERO SECTION (Carousel)
    ========================================= */
-/* .hero-carousel-wrapper {
+.hero-carousel-wrapper {
   position: relative;
-  width: 100%;
-  height: 85vh; /* Taller for cinematic feel */
-  /* overflow: hidden;
-  margin-bottom: -50px; /* Overlap with content below */
-/* } */
+  width: 100vw;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  height: 50vh;
+  max-height: 600px;
+  min-height: 350px;
+  overflow: hidden;
+  margin-bottom: 30px;
+  background-color: var(--color-skeleton-bg);
+  /* 💡 FIX: Add margin-top equal to the nav height for desktop view */
+  margin-top: var(--nav-height-desktop); 
+}
+
 
 /* .hero-slide {
   position: absolute;
