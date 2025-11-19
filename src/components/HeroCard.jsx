@@ -2,9 +2,18 @@
 import React from 'react';
 
 // This component displays a single movie slide at full-screen size
-const HeroCard = ({ item, onSelectMedia }) => { // 💡 NEW: Accept onSelectMedia
+// 💡 FIX: Added onPlayMedia prop to trigger player open
+const HeroCard = ({ item, onSelectMedia, onPlayMedia }) => { 
   // Use a high-quality poster image path for the background
   const backdropUrl = item.imageUrl.replace('/w200', '/w1280'); 
+
+  // 💡 NEW HANDLER: Combines selection and immediate playback
+  const handlePlayClick = () => {
+    // 1. Select the media (so App.jsx knows which video to play)
+    onSelectMedia(item.id); 
+    // 2. Immediately trigger playback
+    onPlayMedia();
+  };
 
   return (
     <div className="hero-slide">
@@ -29,10 +38,11 @@ const HeroCard = ({ item, onSelectMedia }) => { // 💡 NEW: Accept onSelectMedi
         
         {/* Call-to-Action Buttons */}
         <div className="hero-actions">
-          <button className="play-btn">
+          {/* 💡 FIX: Use the new handler */}
+          <button className="play-btn" onClick={handlePlayClick}>
             ▶ Play
           </button>
-          {/* 💡 NEW: Fire onSelectMedia when "More Info" is clicked */}
+          {/* 💡 Fire onSelectMedia when "More Info" is clicked */}
           <button className="more-info-btn" onClick={() => onSelectMedia(item.id)}>
             More Info
           </button>
