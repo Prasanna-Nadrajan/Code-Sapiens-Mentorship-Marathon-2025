@@ -11,6 +11,7 @@ import WatchlistPage from './pages/WatchlistPage.jsx';
 import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
 import MediaPlayer from './components/MediaPlayer.jsx'; 
 import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
+import Footer from './components/Footer.jsx';
 import useUserManagement from './hooks/useUserManagement.js';
 import useUserWatchlist from './hooks/useUserWatchlist.js'; 
 import useUserProgress from './hooks/useUserProgress.js';
@@ -268,6 +269,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
             />
           )}
         </main>
+        <Footer />
       </>
     );
   };

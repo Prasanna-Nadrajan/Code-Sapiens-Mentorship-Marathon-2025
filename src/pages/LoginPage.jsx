@@ -28,7 +28,7 @@ const LoginPage = ({ onLoginSuccess, onGoToSignup, allUsers }) => { // 👈 ACCE
   return (
     <div className="login-container">
       <div className="login-box">
-        <h2 className="login-title">Sign In to Stream-Verse</h2>
+        <h2 className="login-title">Stream Verse</h2>
         <form onSubmit={handleSubmit} className="login-form">
           {/* Display error message */}
           {error && <p className="login-error" color='red'>{error}</p>} 

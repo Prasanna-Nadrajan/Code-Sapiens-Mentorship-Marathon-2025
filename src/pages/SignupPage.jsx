@@ -29,7 +29,7 @@ const SignupPage = ({ onGoToLogin, onRegister }) => { // 👈 ACCEPT onRegister
   return (
     <div className="login-container"> 
       <div className="login-box">
-        <h2 className="login-title">Create Your Stream-Verse Account</h2>
+        <h2 className="login-title">Stream Verse</h2>
         <form onSubmit={handleRegister} className="login-form">
           {/* Display error message */}
           {error && <p className="login-error">{error}</p>}
