@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 // Key for storing the data in localStorage
 const WATCHLIST_STORAGE_KEY = 'streamverse-user-watchlists';
 
-const useUserWatchlist = (currentUserId) => {
-  // Global state holding ALL users' wishlists: { userId: [mediaId1, mediaId2, ...] }
+const useUserWatchlist = (currentProfileId) => {
+  // Global state holding ALL users' wishlists: { profileId: [mediaId1, mediaId2, ...] }
   const [allWatchlists, setAllWatchlists] = useState(() => {
     try {
       const item = window.localStorage.getItem(WATCHLIST_STORAGE_KEY);
@@ -25,13 +25,15 @@ const useUserWatchlist = (currentUserId) => {
     }
   }, [allWatchlists]);
 
-  // The actual watchlist for the current user
-  const userWatchlist = allWatchlists[currentUserId] || [];
+  // The actual watchlist for the current profile
+  const userWatchlist = allWatchlists[currentProfileId] || [];
 
-  // Function to toggle a media item's status in the current user's list
+  // Function to toggle a media item's status in the current profile's list
   const toggleWatchlistItem = (mediaId) => {
+    if (!currentProfileId) return; // Guard clause
+
     setAllWatchlists(prevWatchlists => {
-      const currentList = prevWatchlists[currentUserId] || [];
+      const currentList = prevWatchlists[currentProfileId] || [];
       let newList;
 
       // Check if the item is already in the list
@@ -46,7 +48,7 @@ const useUserWatchlist = (currentUserId) => {
       // Return the updated global dictionary
       return {
         ...prevWatchlists,
-        [currentUserId]: newList
+        [currentProfileId]: newList
       };
     });
   };

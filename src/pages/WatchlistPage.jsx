@@ -27,7 +27,7 @@ const WatchlistPage = ({
 
   return (
     <div className="main-content">
-      <h2>⭐ Your Watchlist ({wishlistItems.length} items)</h2>
+      <h2>⭐ Your Watchlist</h2>
       
       {/* The loading check relies on the fullMediaCatalog length */}
       {fullMediaCatalog.length === 0 ? (

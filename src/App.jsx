@@ -1,38 +1,39 @@
 // src/App.jsx
 import React, { useState, useCallback, useEffect } from 'react';
 // IMPORT ThemeProvider and useTheme
-import { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx'; 
-import MediaFetcher from './components/MediaFetcher.jsx'; 
+import { ThemeProvider, useTheme } from './contexts/ThemeContext.jsx';
+import MediaFetcher from './components/MediaFetcher.jsx';
 import LoginPage from './pages/LoginPage.jsx';
-import ManageProfilePage from './pages/ManageProfilePage.jsx'; 
-import SettingsPage from './pages/SettingsPage.jsx';  
-import SignupPage from './pages/SignupPage.jsx'; 
-import WatchlistPage from './pages/WatchlistPage.jsx'; 
-import MediaDetailPage from './pages/MediaDetailPage.jsx'; 
-import MediaPlayer from './components/MediaPlayer.jsx'; 
-import IntroPage from './pages/IntroPage.jsx'; // 💡 NEW: Import Intro Page
-import Footer from './components/Footer.jsx'; // 💡 NEW: Import Footer Component
+import ManageProfilePage from './pages/ManageProfilePage.jsx';
+import SettingsPage from './pages/SettingsPage.jsx';
+import SignupPage from './pages/SignupPage.jsx';
+import WatchlistPage from './pages/WatchlistPage.jsx';
+import MediaDetailPage from './pages/MediaDetailPage.jsx';
+import MediaPlayer from './components/MediaPlayer.jsx';
+import IntroPage from './pages/IntroPage.jsx';
+import Footer from './components/Footer.jsx';
+import ProfilePickerPage from './pages/ProfilePickerPage.jsx';
 import useUserManagement from './hooks/useUserManagement.js';
-import useUserWatchlist from './hooks/useUserWatchlist.js'; 
+import useUserWatchlist from './hooks/useUserWatchlist.js';
 import useUserProgress from './hooks/useUserProgress.js';
 import ProfileMenu from './components/ProfileMenu.jsx';
 
 // Inline SVG for Hamburger/Close Icon
 const MenuIcon = ({ isOpen, onClick }) => (
-  <button 
-    className="mobile-menu-toggle" 
-    onClick={onClick} 
+  <button
+    className="mobile-menu-toggle"
+    onClick={onClick}
     aria-label={isOpen ? "Close menu" : "Open menu"}
   >
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
       strokeLinejoin="round"
       style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)', transition: 'transform 0.3s' }}
     >
@@ -55,25 +56,25 @@ const MenuIcon = ({ isOpen, onClick }) => (
 );
 
 
-// 💡 NEW: Keys for storing auth state in localStorage
+// Keys for storing auth state in localStorage
 const INTRO_SEEN_KEY = 'streamverse-intro-seen';
 const AUTH_STORAGE_KEY_ID = 'streamverse-auth-userId';
 const AUTH_STORAGE_KEY_NAME = 'streamverse-auth-userName';
 
 // Separated AppContent to use the ThemeContext
-const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent component
+const AppContent = () => {
 
-  // 💡 NEW: Function to read initial state from localStorage
+  // Function to read initial state from localStorage
   const getInitialState = () => {
     try {
       const storedUserId = localStorage.getItem(AUTH_STORAGE_KEY_ID);
       const storedUserName = localStorage.getItem(AUTH_STORAGE_KEY_NAME);
       // Check the new key: if it's 'true', the intro has been seen.
-      const introSeen = localStorage.getItem(INTRO_SEEN_KEY) === 'true'; 
+      const introSeen = localStorage.getItem(INTRO_SEEN_KEY) === 'true';
 
       let initialPage = 'login';
       if (storedUserId && storedUserName) {
-        initialPage = 'home';
+        initialPage = 'profile_picker';
       }
 
       return {
@@ -81,7 +82,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
         id: storedUserId,
         name: storedUserName,
         // If the intro has been seen, set showIntro to false. Otherwise, true.
-        showIntro: !introSeen, 
+        showIntro: !introSeen,
       };
     } catch (e) {
       console.error("Failed to read auth or intro from storage", e);
@@ -90,102 +91,127 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
     return { page: 'login', id: null, name: null, showIntro: true };
   };
 
-  // 💡 NEW: Initialize state from localStorage function
+  // Initialize state from localStorage function
   const [initialState] = useState(getInitialState);
-  const [currentPage, setCurrentPage] = useState(initialState.page); 
-  const [currentUserId, setCurrentUserId] = useState(initialState.id); 
+  const [currentPage, setCurrentPage] = useState(initialState.page);
+  const [currentUserId, setCurrentUserId] = useState(initialState.id);
   const [currentUserName, setCurrentUserName] = useState(initialState.name);
-  
-  const [fullMediaCatalog, setFullMediaCatalog] = useState([]); 
-  const [selectedMediaId, setSelectedMediaId] = useState(null); 
-  const [isPlaying, setIsPlaying] = useState(false); 
-  const [showIntro, setShowIntro] = useState(initialState.showIntro); // 💡 NEW: State for Intro
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // 💡 NEW: Mobile Menu State
-  const { allUsers, registerUser } = useUserManagement(); 
-  // const { theme } = useTheme(); // Removed unused theme access here
 
-  const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentUserId); 
-  const { userProgress, toggleProgressItem } = useUserProgress(currentUserId);
-  
-  // 💡 NEW: Toggle handler
+  // Profile State
+  const [currentProfileId, setCurrentProfileId] = useState(null);
+  const [currentProfile, setCurrentProfile] = useState(null);
+
+  const [fullMediaCatalog, setFullMediaCatalog] = useState([]);
+  const [selectedMediaId, setSelectedMediaId] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [showIntro, setShowIntro] = useState(initialState.showIntro);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { allUsers, registerUser, addProfile, deleteProfile, getUserProfiles } = useUserManagement();
+
+  // Pass currentProfileId instead of currentUserId
+  const { userWatchlist, toggleWatchlistItem } = useUserWatchlist(currentProfileId);
+  const { userProgress, toggleProgressItem } = useUserProgress(currentProfileId);
+
+  // Toggle handler
   const toggleMobileMenu = () => setIsMobileMenuOpen(prev => !prev);
-  
-  // 💡 NEW: Close handler that is useful after navigation
+
+  // Close handler that is useful after navigation
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
 
   const handleIntroEnd = useCallback(() => {
     // 1. Set the flag in localStorage so the intro is skipped next time
     try {
-        localStorage.setItem(INTRO_SEEN_KEY, 'true');
+      localStorage.setItem(INTRO_SEEN_KEY, 'true');
     } catch (e) {
-        console.error("Failed to set intro seen flag:", e);
+      console.error("Failed to set intro seen flag:", e);
     }
     // 2. Hide the intro screen, which will trigger the rest of the application render
     setShowIntro(false);
   }, []);
 
-  // 💡 NEW: Handler to show media details
+  // Handler to show media details
   const handleSelectMedia = (mediaId) => {
     setSelectedMediaId(mediaId);
     setIsPlaying(false); // Ensure player is closed when selecting new media
     closeMobileMenu(); // Close menu on navigation
   };
 
-  // 💡 NEW: Handler to clear media details (go back)
+  // Handler to clear media details (go back)
   const handleClearSelectedMedia = () => {
     setSelectedMediaId(null);
     setIsPlaying(false); // Ensure player is closed
     closeMobileMenu(); // Close menu on navigation
   };
-  
-  // 💡 NEW: Handlers to open/close the player
+
+  // Handlers to open/close the player
   const handlePlayMedia = () => setIsPlaying(true);
   const handleClosePlayer = () => setIsPlaying(false);
 
   // Function to switch to home page AND set the logged-in user's ID
-  const handleLogin = (userId) => { 
+  const handleLogin = (userId) => {
     const user = allUsers.find(u => u.id === userId || u.id === String(userId));
     const userName = user ? user.username : 'Guest';
 
     try {
-      // 💡 NEW: Save auth state to localStorage
+      // Save auth state to localStorage
       localStorage.setItem(AUTH_STORAGE_KEY_ID, userId);
       localStorage.setItem(AUTH_STORAGE_KEY_NAME, userName);
-      
+
       // Set state
       setCurrentUserId(userId);
-      setCurrentUserName(userName); 
-      setCurrentPage('home'); 
-      handleClearSelectedMedia(); 
+      setCurrentUserName(userName);
+      setCurrentPage('profile_picker');
+      handleClearSelectedMedia();
     } catch (e) {
       console.error("Failed to save auth to storage", e);
     }
     closeMobileMenu(); // Close menu on login
   };
 
-  // 💡 NEW: This function now also serves as "logout"
+  const handleProfileSelect = (profileId) => {
+    const profiles = getUserProfiles(currentUserId);
+    const profile = profiles.find(p => p.id === profileId);
+    if (profile) {
+      setCurrentProfileId(profileId);
+      setCurrentProfile(profile);
+      setCurrentPage('home');
+    }
+  };
+
+  const handleAddProfile = (name, avatar) => {
+    addProfile(currentUserId, name, avatar);
+  };
+
+  const handleDeleteProfile = (profileId) => {
+    deleteProfile(currentUserId, profileId);
+  };
+
+  // This function now also serves as "logout"
   const handleGoToLogin = () => {
     try {
-      // 💡 NEW: Clear auth state from localStorage
+      // Clear auth state from localStorage
       localStorage.removeItem(AUTH_STORAGE_KEY_ID);
       localStorage.removeItem(AUTH_STORAGE_KEY_NAME);
     } catch (e) {
-       console.error("Failed to clear auth from storage", e);
+      console.error("Failed to clear auth from storage", e);
     }
-    
+
     // Reset state
-    setCurrentUserId(null); 
-    setCurrentUserName(null); 
+    setCurrentUserId(null);
+    setCurrentUserName(null);
+    setCurrentProfileId(null);
+    setCurrentProfile(null);
     setCurrentPage('login');
-    handleClearSelectedMedia(); 
+    handleClearSelectedMedia();
     closeMobileMenu(); // Close menu on logout
   };
-  
+
   const handleGoToSignup = () => {
     setCurrentPage('signup');
     handleClearSelectedMedia(); // Clear detail view
-    closeMobileMenu(); 
+    closeMobileMenu();
   };
 
   const handleGoToWatchlist = () => {
@@ -205,7 +231,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
     handleClearSelectedMedia(); // Clear detail view
     closeMobileMenu(); // Close menu after nav
   };
-  
+
   const handleGoToSettings = () => {
     setCurrentPage('settings');
     handleClearSelectedMedia(); // Clear detail view
@@ -213,37 +239,37 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
   };
 
   // FIX: Wrap the handler with useCallback to ensure it's not recreated on every render
-  const handleMediaDataFetched = useCallback((data) => { 
+  const handleMediaDataFetched = useCallback((data) => {
     // This function will receive the full list of movies from MediaFetcher
     setFullMediaCatalog(data);
-  }, []); 
+  }, []);
 
   const renderPage = () => {
-    // 💡 NEW: Show Intro page first
+    // Show Intro page first
     if (showIntro) {
       return <IntroPage onAnimationEnd={handleIntroEnd} />;
     }
 
     const selectedItem = fullMediaCatalog.find(item => item.id === selectedMediaId);
 
-    // 💡 NEW: Check if we should render the player (highest priority)
+    // Check if we should render the player (highest priority)
     if (isPlaying && selectedItem) {
       return (
-        <MediaPlayer 
+        <MediaPlayer
           item={selectedItem}
           onClose={handleClosePlayer}
         />
       );
     }
 
-    // 💡 NEW: Check if a movie is selected first
+    // Check if a movie is selected first
     if (selectedMediaId && selectedItem) {
       // If item is found, show detail page
       return (
         <MediaDetailPage
           item={selectedItem}
           onBack={handleClearSelectedMedia} // Pass the "back" handler
-          onPlay={handlePlayMedia} // 💡 NEW: Pass the "play" handler
+          onPlay={handlePlayMedia} // Pass the "play" handler
           userWatchlist={userWatchlist}
           onToggleWatchlist={toggleWatchlistItem}
           userProgress={userProgress}
@@ -251,7 +277,7 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
         />
       );
     }
-    
+
     // If item not found (e.g., bad ID), clear selection
     if (selectedMediaId) {
       handleClearSelectedMedia();
@@ -259,26 +285,36 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
 
     if (currentPage === 'login') {
       return (
-        <LoginPage 
+        <LoginPage
           allUsers={allUsers} //PASS ALL USERS for authentication
-          onLoginSuccess={handleLogin} 
+          onLoginSuccess={handleLogin}
           onGoToSignup={handleGoToSignup}
         />
       );
     }
-    
+
     if (currentPage === 'signup') {
       return (
-        <SignupPage 
+        <SignupPage
           onRegister={registerUser} //PASS REGISTER FUNCTION
           onGoToLogin={handleGoToLogin}
         />
       );
     }
 
-    // Default (Home/MediaFeed) View - Handles all logged-in states
+    if (currentPage === 'profile_picker') {
+      return (
+        <ProfilePickerPage
+          profiles={getUserProfiles(currentUserId)}
+          onSelectProfile={handleProfileSelect}
+          onAddProfile={handleAddProfile}
+          onDeleteProfile={handleDeleteProfile}
+        />
+      );
+    }
+
     return (
-      <> 
+      <>
         <header>
           <nav className="nav-bar">
             <span className="logo">Stream-Verse</span>
@@ -286,77 +322,81 @@ const AppContent = () => { // 💡 FIX: Re-wrapped all logic in the AppContent c
             <div className="nav-links">
               <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
               <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
-              
-              <ProfileMenu 
-                onLogout={handleGoToLogin} 
-                username={currentUserName} 
-                onManageProfile={handleGoToManageProfile} 
-                onSettings={handleGoToSettings}          
+
+              <ProfileMenu
+                onLogout={handleGoToLogin}
+                username={currentProfile ? currentProfile.name : currentUserName}
+                onManageProfile={handleGoToManageProfile}
+                onSettings={handleGoToSettings}
               />
+              <button className="switch-profile-btn" onClick={() => setCurrentPage('profile_picker')} style={{ marginLeft: '10px', background: 'transparent', border: '1px solid #fff', color: '#fff', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' }}>
+                Switch Profile
+              </button>
             </div>
-            
-            {/* 💡 NEW: Mobile Menu Toggle Button */}
+
+            {/* Mobile Menu Toggle Button */}
             <MenuIcon isOpen={isMobileMenuOpen} onClick={toggleMobileMenu} />
-            
-            {/* 💡 NEW: Mobile Menu Overlay */}
+
+            {/* Mobile Menu Overlay */}
             <div className={`mobile-menu-overlay ${isMobileMenuOpen ? 'open' : ''}`}>
-                 <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
-                 <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
-                 <a href="#" onClick={handleGoToManageProfile}>Manage Profile</a>
-                 <a href="#" onClick={handleGoToSettings}>Settings</a>
-                 <button className="mobile-logout-btn" onClick={handleGoToLogin}>Logout</button>
+              <a href="#" onClick={handleGoToHome} className={currentPage === 'home' ? 'active-link' : ''}>Home</a>
+              <a href="#" onClick={handleGoToWatchlist} className={currentPage === 'watchlist' ? 'active-link' : ''}>Watchlist</a>
+              <a href="#" onClick={handleGoToManageProfile}>Manage Profile</a>
+              <a href="#" onClick={handleGoToSettings}>Settings</a>
+              <a href="#" onClick={() => { setCurrentPage('profile_picker'); closeMobileMenu(); }}>Switch Profile</a>
+              <button className="mobile-logout-btn" onClick={handleGoToLogin}>Logout</button>
             </div>
-            
+
           </nav>
         </header>
-        
+
         <main className="main-content">
           {currentPage === 'manage_profile' && <ManageProfilePage username={currentUserName} />}
           {currentPage === 'settings' && <SettingsPage />}
-          
+
           {currentPage === 'home' && (
-            <MediaFetcher 
+            <MediaFetcher
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
               onDataFetched={handleMediaDataFetched} // Pass handler to update catalog
-              userProgress={userProgress} // 💡 NEW: Pass user progress
-              onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
-              onSelectMedia={handleSelectMedia} // 💡 NEW: Pass select handler
+              userProgress={userProgress} // Pass user progress
+              onToggleProgress={toggleProgressItem} // Pass toggle function
+              onSelectMedia={handleSelectMedia} // Pass select handler
               onPlayMedia={handlePlayMedia} // Pass play handler
             />
           )}
-          
+
           {/* Watchlist component requires the full catalog */}
           {currentPage === 'watchlist' && (
-            <WatchlistPage 
+            <WatchlistPage
               fullMediaCatalog={fullMediaCatalog} // Pass the state
               userWatchlist={userWatchlist}
               onToggleWatchlist={toggleWatchlistItem}
-              userProgress={userProgress} // 💡 NEW: Pass user progress
-              onToggleProgress={toggleProgressItem} // 💡 NEW: Pass toggle function
-              onSelectMedia={handleSelectMedia} // 💡 NEW: Pass select handler
+              userProgress={userProgress} // Pass user progress
+              onToggleProgress={toggleProgressItem} // Pass toggle function
+              onSelectMedia={handleSelectMedia} // Pass select handler
             />
           )}
         </main>
-        
-        {/* 💡 NEW: Footer is added here for all logged-in views */}
+
+        {/* Footer is added here for all logged-in views */}
         <Footer />
       </>
     );
   };
-  
+
   return (
     // The theme class is applied globally via useEffect in ThemeContext
     <div>
       {renderPage()}
     </div>
   );
-}; // 💡 FIX: This closing brace belongs to AppContent
+};
 
 const App = () => (
-    <ThemeProvider>
-        <AppContent />
-    </ThemeProvider>
+  <ThemeProvider>
+    <AppContent />
+  </ThemeProvider>
 );
 
 export default App;
