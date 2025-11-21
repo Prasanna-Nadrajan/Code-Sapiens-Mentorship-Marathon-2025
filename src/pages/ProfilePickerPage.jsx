@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ProfilePickerPage.css'; // We'll create this CSS file next
+// import './ProfilePickerPage.css'; // We'll create this CSS file next
 
 const AVATARS = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐵'];
 
